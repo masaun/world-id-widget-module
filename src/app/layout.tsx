@@ -6,8 +6,8 @@ import './globals.css';
 import ContextProvider from '@/context'
 
 export const metadata: Metadata = {
-  title: "AppKit in Next.js + wagmi",
-  description: "AppKit example dApp",
+  title: "World ID Widget Module",
+  description: "World ID Widget Module",
 };
 
 export default async function RootLayout({
