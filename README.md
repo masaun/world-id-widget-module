@@ -1,6 +1,10 @@
 # World ID Widget Module
 
-This is a Next.js project.
+## Overview
+
+- This is a Next.js project.
+
+<br>
 
 ## Usage
 
@@ -9,6 +13,8 @@ This is a Next.js project.
 3. Rename `.env.example` to `.env` and paste your `Project ID` as the value for `NEXT_PUBLIC_PROJECT_ID`
 4. Run `pnpm install` to install dependencies
 5. Run `pnpm run dev` to start the development server
+
+<br>
 
 ## Resources
 
