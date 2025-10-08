@@ -1,4 +1,4 @@
-# Reown AppKit Example using wagmi (next.js with App Router)
+# World ID Widget Module
 
 This is a Next.js project.
 
