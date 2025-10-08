@@ -10,7 +10,8 @@ export default function Home() {
 
   return (
     <div className={"pages"}>
-      <Image src="/reown.svg" alt="Reown" width={150} height={150} priority />
+      {/* <Image src="/reown.svg" alt="Reown" width={150} height={150} priority /> */}
+      
       <h1>World ID Widget Module</h1>
 
       <ConnectButton />
@@ -22,13 +23,18 @@ export default function Home() {
           console.error("World ID verification error:", error);
         }}
       />
-      <ActionButtonList />
+      
+      {/* <ActionButtonList /> */}
+
+      {/* 
       <div className="advice">
         <p>
           This projectId only works on localhost. <br/>Go to <a href="https://dashboard.reown.com" target="_blank" className="link-button" rel="Reown Dashboard">Reown Dashboard</a> to get your own.
         </p>
       </div>
-      <InfoList />
+      */}
+
+      {/* <InfoList /> */}
     </div>
   );
 }
