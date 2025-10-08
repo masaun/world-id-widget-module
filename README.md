@@ -1,4 +1,4 @@
-# World ID Widget Module
+# World ID Widget Module 🆔
 
 A modern, secure decentralized identity verification application built with Next.js, React, and TypeScript. World ID Widget Module integrates Worldcoin's World ID protocol with Reown (formerly WalletConnect) to provide seamless wallet connections and privacy-preserving human verification for decentralized applications (dApps).
 
@@ -12,23 +12,22 @@ This application serves as a reference implementation for developers looking to 
 
 ## Features
 
-• **World ID Integration**: Privacy-preserving human verification using Worldcoin's orb and phone verification methods
-• **Secure Wallet Connections**: Connect to popular crypto wallets using Reown's advanced protocol  
-• **Multi-Chain Support**: Support for Ethereum, Polygon, and other EVM-compatible networks through Wagmi
-• **User-Friendly Interface**: Clean, intuitive UI for managing both identity verification and wallet connections
-• **Real-Time Verification**: Instant World ID verification with detailed result display
-• **TypeScript Support**: Fully typed components for better developer experience and reliability
-• **Cross-Platform Compatibility**: Works seamlessly on desktop and mobile devices
+- **World ID Integration**: Privacy-preserving human verification using Worldcoin's orb and phone verification methods
+- **Secure Wallet Connections**: Connect to popular crypto wallets using Reown's advanced protocol  
+- **Multi-Chain Support**: Support for Ethereum, Polygon, and other EVM-compatible networks through Wagmi
+- **User-Friendly Interface**: Clean, intuitive UI for managing both identity verification and wallet connections
+- **Real-Time Verification**: Instant World ID verification with detailed result display
+- **Cross-Platform Compatibility**: Works seamlessly on desktop and mobile devices
 
 ## Tech Stack
 
-• **Frontend**: React 19 with TypeScript and Next.js 15.3.3
-• **Identity**: World ID (@worldcoin/idkit) for human verification
-• **Wallet Integration**: Reown AppKit with Wagmi adapter for multi-wallet support
-• **State Management**: React Query (@tanstack/react-query) for server state management
-• **Blockchain Interaction**: Viem for Ethereum interactions
-• **Styling**: CSS modules with responsive design
-• **Development**: ESLint for code quality and TypeScript for type safety
+- **Frontend**: React v19 with TypeScript and Next.js v15.3.3
+- **Identity**: World ID (@worldcoin/idkit) for human verification
+- **Wallet Integration**: Reown AppKit with Wagmi adapter for multi-wallet support
+- **State Management**: React Query (@tanstack/react-query) for server state management
+- **Blockchain Interaction**: Viem for Ethereum interactions
+- **Styling**: CSS modules with responsive design
+- **Development**: ESLint for code quality and TypeScript for type safety
 
 ## Installation
 
