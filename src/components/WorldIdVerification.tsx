@@ -39,7 +39,8 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
           verification_level={VerificationLevel.SecureDocument}
           onSuccess={handleVerify}
           onError={handleError}
-          credential_types={["orb", "phone"]}
+          credential_types={["secure document"]}
+          //credential_types={["orb", "phone"]}
           enableTelemetry
         >
           {({ open }: { open: () => void }) => (
