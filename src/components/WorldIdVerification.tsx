@@ -11,8 +11,8 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ISuccessResult | null>(null);
 
-  const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "app_staging_123"; // Replace with your actual app_id
-  const action = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "vote"; // Replace with your action
+  const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your actual app_id
+  const action = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
 
   const handleVerify = (result: ISuccessResult) => {
     console.log("World ID verification successful:", result);
