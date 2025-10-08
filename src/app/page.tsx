@@ -10,7 +10,8 @@ export default function Home() {
 
   return (
     <div className={"pages"}>
-      <Image src="/reown.svg" alt="Reown" width={150} height={150} priority />
+      {/* <Image src="/reown.svg" alt="Reown" width={150} height={150} priority /> */}
+      
       <h1>World ID Widget Module</h1>
 
       <ConnectButton />
