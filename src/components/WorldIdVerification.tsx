@@ -1,5 +1,5 @@
 'use client'
-import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
+import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
 import { useState } from 'react'
 
 interface WorldIdProps {
@@ -36,6 +36,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
         <IDKitWidget
           app_id={app_id}
           action={action}
+          verification_level={VerificationLevel.SecureDocument}
           onSuccess={handleVerify}
           onError={handleError}
           credential_types={["orb", "phone"]}
