@@ -15,6 +15,7 @@ export default function Home() {
       <h1>World ID Widget Module</h1>
 
       <ConnectButton />
+      
       <WorldIdVerification 
         onSuccess={(result) => {
           console.log("World ID verification completed:", result);
