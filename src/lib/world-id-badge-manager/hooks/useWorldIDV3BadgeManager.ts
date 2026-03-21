@@ -1,10 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAccount } from 'wagmi';
-import { readContract } from '@wagmi/core';
-
-// @dev - TODO: Fix the import path depends on the project
-import { wagmiConfig } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/config';
-//import { wagmiConfig } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
 // @dev - Functions in the WorldIDV3BadgeManager.sol
 import {
@@ -25,9 +20,9 @@ export interface WorldIDV3BadgeData {
  */
 export const useHasWorldIDV3Badge = () => {
   // @dev - Retrieve a connected wallet address
-  const { address } = useAccount();
-  //const connectedAddress: Address = address;
-  const connectedAddress: Address = process.env.TEST_WALLET_ADDRESS; // @dev - TEMPORARY
+  //const { address } = useAccount();
+  //const connectedAddress = address as `0x${string}`;
+  const connectedAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS as `0x${string}`; // @dev - TEMPORARY
 
   const [badgeData, setBadgeData] = useState<WorldIDV3BadgeData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);

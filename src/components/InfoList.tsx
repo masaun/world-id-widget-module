@@ -2,12 +2,13 @@
 
 import { useEffect } from 'react'
 import {
-    useAppKitState,
-    useAppKitTheme,
-    useAppKitEvents,
-    useAppKitAccount,
-    useWalletInfo
-     } from '@reown/appkit/react'
+  useAppKitState,
+  useAppKitTheme,
+  useAppKitEvents,
+  useAppKitAccount,
+  useWalletInfo
+} from '@reown/appkit/react'
+
 import { useClientMounted } from "@/hooks/useClientMount";
 
 export const InfoList = () => {
