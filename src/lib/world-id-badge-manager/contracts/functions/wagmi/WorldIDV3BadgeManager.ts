@@ -25,11 +25,11 @@ export const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.WORLD_ID_V3_BADGE_M
  * @dev - Doc: https://wagmi.sh/core/api/actions/writeContract
  */
 export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
-  root: Number,
-  signalHash: Number,
-  nullifierHash: Number,
-  externalNullifierHash: Number,
-  proof: Array<Number>
+  root: bigint,
+  signalHash: bigint,
+  nullifierHash: bigint,
+  externalNullifierHash: bigint,
+  proof: Array<bigint>
 ): Promise<any> {
   try {
     const txResult = await writeContract(wagmiConfig, {
@@ -44,7 +44,7 @@ export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
         proof
       ],
       chainId: WORLD_CHAIN_SEPOLIA_CHAIN_ID, // World Chain Sepolia
-      //chainId: wagmiConfig.chains[5].id, // World Chain Sepolia
+      //chainId: wagmiConfig.chains[5].id,   // World Chain Sepolia
     })
     
     return txResult;
