@@ -2,8 +2,11 @@
 import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
 import { useState } from 'react'
 
-// @dev - ABI of the WorldIDV3BadgeManager.sol
-import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
+// @dev - Import the "@wagmi/core"
+//import { useAccount } from 'wagmi';
+
+// @dev - The functions, which is defined in the WorldIDV3BadgeManager.sol
+import { useHasWorldIDV3Badge } from '@/lib/world-id-badge-manager/hooks/useWorldIDV3BadgeManager'
 
 interface WorldIdProps {
   onSuccess?: (result: ISuccessResult) => void;
@@ -14,6 +17,10 @@ interface WorldIdProps {
  * @title - The WorldIdVerification function
  */
 export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
+  // @dev - Retrieve a connected wallet address
+  //const { address } = useAccount();
+  //const connectedAddress = address;
+
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ISuccessResult | null>(null);
 
@@ -30,7 +37,10 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
     }
 
     // TODO: Implement the on-chain logic
-    
+
+    // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol 
+    const hasWorldIDV3Badge = useHasWorldIDV3Badge();
+    console.log("hasWorldIDV3Badge:", hasWorldIDV3Badge);
   };
 
   // @dev - The process if a World ID verification is failed.

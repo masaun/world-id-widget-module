@@ -1,51 +1,59 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import { readContract } from '@wagmi/core';
-import { wagmiConfig } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
-// @dev - ABI of the WorldIDV3BadgeManager.sol
-import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
-//import { NETWORK_SCHOOL_MEMBERSHIP_BADGE_MANAGER_ABI } from '@/lib/network-school-membership-verification-package/contracts/abis/abis';
+// @dev - TODO: Fix the import path depends on the project
+import { wagmiConfig } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/config';
+//import { wagmiConfig } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
-import { base } from '@wagmi/core/chains';
+// @dev - Functions in the WorldIDV3BadgeManager.sol
+import {
+  verifyWorldIDV3ProofAndStoreIntoOnChainStorage,
+  verifyWorldIDV3Proof,
+  hasWorldIDV3Badge,
+  WORLD_ID_V3_BADGE_MANAGER_ADDRESS
+} from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManager'
 
-const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.WORLD_ID_V3_BADGE_MANAGER_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
-
-export interface NSMembershipBadgeData {
+export interface WorldIDV3BadgeData {
   hasVerifiedBadge: boolean;
   walletAddress: string;
   verifiedAt: string | null;
 }
 
 /**
- * @title - useWorldIDV3BadgeManager.ts
+ * @notice - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol
  */
-export const useWorldIDV3BadgeManager = () => {
+export const useHasWorldIDV3Badge = () => {
+  // @dev - Retrieve a connected wallet address
   const { address } = useAccount();
-  const [badgeData, setBadgeData] = useState<NSMembershipBadgeData | null>(null);
+  const connectedAddress: Address = address;
+  //const connectedAddress: Address = process.env.TEST_WALLET_ADDRESS;
+
+  const [badgeData, setBadgeData] = useState<WorldIDV3BadgeData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [refetchCounter, setRefetchCounter] = useState(0);
 
-  const refetchNSBadge = useCallback(() => {
+  const refetchWorldIDV3Badge = useCallback(() => {
     setRefetchCounter(c => c + 1);
   }, []);
 
   // Listen for custom event dispatched after successful proof submission
   useEffect(() => {
-    const handler = () => refetchNSBadge();
-    window.addEventListener('ns-badge-verified', handler);
-    return () => window.removeEventListener('ns-badge-verified', handler);
-  }, [refetchNSBadge]);
+    const handler = () => refetchWorldIDV3Badge();
+    window.addEventListener('world-id-v3-badge-verified', handler);
+    return () => window.removeEventListener('world-id-v3-badge-verified', handler);
+  }, [refetchWorldIDV3Badge]);
 
   useEffect(() => {
+    // @dev - Check whether a user has a WorldIDV3Badge or not
     const checkBadge = async () => {
-      if (!address) {
+      if (!connectedAddress) {
         setBadgeData(null);
         return;
       }
 
-      if (!NS_BADGE_MANAGER_ADDRESS) {
+      if (!WORLD_ID_V3_BADGE_MANAGER_ADDRESS) {
         setBadgeData(null);
         return;
       }
@@ -54,18 +62,13 @@ export const useWorldIDV3BadgeManager = () => {
       setError(null);
 
       try {
-        const hasProof = await readContract(wagmiConfig, {
-          address: NS_BADGE_MANAGER_ADDRESS,
-          abi: NETWORK_SCHOOL_MEMBERSHIP_BADGE_MANAGER_ABI,
-          functionName: 'hasStoredProof',
-          args: [address],
-          chainId: base.id,
-        }) as boolean;
+        // @dev - Call the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol
+        const hasWorldIDV3Proof = await hasWorldIDV3Badge(connectedAddress);
 
         let verifiedAt: string | null = null;
-        if (hasProof) {
+        if (hasWorldIDV3Proof) {
           try {
-            const tsRes = await fetch(`/api/badges/verification-timestamp?walletAddress=${address}&badgeType=ns-membership`);
+            const tsRes = await fetch(`/api/badges/verification-timestamp?walletAddress=${connectedAddress}&badgeType=world-id-v3`);
             if (tsRes.ok) {
               const tsData = await tsRes.json();
               verifiedAt = tsData.verifiedAt || null;
@@ -76,8 +79,8 @@ export const useWorldIDV3BadgeManager = () => {
         }
 
         setBadgeData({
-          hasVerifiedBadge: hasProof,
-          walletAddress: address,
+          hasVerifiedBadge: hasWorldIDV3Proof,
+          walletAddress: connectedAddress, // address is the connected-wallet address
           verifiedAt,
         });
       } catch (err) {
@@ -89,12 +92,12 @@ export const useWorldIDV3BadgeManager = () => {
     };
 
     checkBadge();
-  }, [address, refetchCounter]);
+  }, [connectedAddress, refetchCounter]);
 
   return {
-    nsMembershipBadge: badgeData,
+    worldIDV3Badge: badgeData,
     nsLoading: loading,
     nsError: error,
-    refetchNSBadge,
+    refetchWorldIDV3Badge,
   };
 };
