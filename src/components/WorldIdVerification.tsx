@@ -2,8 +2,22 @@
 import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
 import { useState } from 'react'
 
-// @dev - ABI of the WorldIDV3BadgeManager.sol
-import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
+// @dev - Import the "@wagmi/core"
+//import { useAccount } from 'wagmi';
+
+// @dev - Type of the contract ABI, which is imported from the 'viem' library
+import type { Abi, Address } from 'viem';
+
+// @dev - The functions, which is defined in the WorldIDV3BadgeManager.sol
+import { useHasWorldIDV3Badge } from '@/lib/world-id-badge-manager/hooks/useWorldIDV3BadgeManager'
+
+// @dev - Functions in the WorldIDV3BadgeManager.sol
+import {
+  verifyWorldIDV3ProofAndStoreIntoOnChainStorage,
+  verifyWorldIDV3Proof,
+  hasWorldIDV3Badge,
+  WORLD_ID_V3_BADGE_MANAGER_ADDRESS
+} from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManager'
 
 interface WorldIdProps {
   onSuccess?: (result: ISuccessResult) => void;
@@ -14,6 +28,10 @@ interface WorldIdProps {
  * @title - The WorldIdVerification function
  */
 export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
+  // @dev - Retrieve a connected wallet address
+  //const { address } = useAccount();
+  //const connectedAddress = address;
+
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ISuccessResult | null>(null);
 
@@ -21,7 +39,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const action = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
 
   // @dev - The process if a World ID verification is successful.
-  const handleVerify = (result: ISuccessResult) => {
+  const handleVerify = async (result: ISuccessResult) => {
     console.log("World ID verification successful:", result);
     setIsVerified(true);
     setVerificationResult(result);
@@ -30,7 +48,16 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
     }
 
     // TODO: Implement the on-chain logic
-    
+
+    // @dev - Retrieve a connected wallet address
+    //const { address } = useAccount();
+    //const connectedAddress: Address = address;
+    const connectedAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS as `0x${string}`; // @dev - TEMPORARY
+
+    // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol 
+    const _hasWorldIDV3Badge = await hasWorldIDV3Badge(connectedAddress);
+    //const hasWorldIDV3Badge = useHasWorldIDV3Badge();
+    console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
   };
 
   // @dev - The process if a World ID verification is failed.

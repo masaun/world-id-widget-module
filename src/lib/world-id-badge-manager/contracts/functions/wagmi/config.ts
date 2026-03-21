@@ -2,9 +2,13 @@ import { createConfig, http, fallback } from '@wagmi/core'
 import { base, celo, baseSepolia } from '@wagmi/core/chains'
 import type { Chain } from 'wagmi/chains'
 
+// @dev - Chain ID for World Chain
+export const WORLD_CHAIN_MAINNET_CHAIN_ID = 480;
+export const WORLD_CHAIN_SEPOLIA_CHAIN_ID = 4801;
+
 // @dev - Custom World Chain Mainnet
-const worldChain: Chain = {
-  id: 480,
+export const worldChain: Chain = {
+  id: WORLD_CHAIN_MAINNET_CHAIN_ID,
   name: 'World Chain Mainnet',
   nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
@@ -18,8 +22,8 @@ const worldChain: Chain = {
 }
 
 // @dev - Custom World Chain Sepolia
-const worldChainSepolia: Chain = {
-  id: 4801,
+export const worldChainSepolia: Chain = {
+  id: WORLD_CHAIN_SEPOLIA_CHAIN_ID,
   name: 'World Chain Sepolia',
   nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
@@ -33,7 +37,7 @@ const worldChainSepolia: Chain = {
 }
 
 // @dev - Custom Celo Sepolia testnet chain
-const celoSepolia: Chain = {
+export const celoSepolia: Chain = {
   id: 11142220,
   name: 'Celo Sepolia',
   nativeCurrency: { name: 'Celo', symbol: 'CELO', decimals: 18 },

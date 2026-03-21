@@ -8,7 +8,8 @@ import type { Abi, Address } from 'viem';
 // @dev - TODO: We should replace this depends on project
 import { 
   wagmiConfig,
-  //base, baseSepolia, worldchain, worldchainSepolia
+  //base, baseSepolia, worldchain, worldchainSepolia,
+  WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
 } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/config';
 //import { wagmiConfig } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
@@ -17,7 +18,7 @@ import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/cont
 //import { NETWORK_SCHOOL_MEMBERSHIP_BADGE_MANAGER_ABI } from '@/lib/network-school-membership-verification-package/contracts/abis/abis';
 
 // @dev - The deployed contract address of the WorldIDV3BadgeManager.sol
-const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.WORLD_ID_V3_BADGE_MANAGER_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
+export const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.WORLD_ID_V3_BADGE_MANAGER_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
 
 /** 
  * @notice - The verifyWorldIDV3ProofAndStoreIntoOnChainStorage() function of the WorldIDV3BadgeManager.sol
@@ -42,8 +43,10 @@ export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
         externalNullifierHash,
         proof
       ],
-      chainId: wagmiConfig.chains[5].id, // World Chain Sepolia
+      chainId: WORLD_CHAIN_SEPOLIA_CHAIN_ID, // World Chain Sepolia
+      //chainId: wagmiConfig.chains[5].id, // World Chain Sepolia
     })
+    
     return txResult;
   } catch(error) {
     console.error(error);
@@ -55,14 +58,15 @@ export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
  * @notice - The hasWorldIDV3Badge() function of the WorldIDV3BadgeManager.sol
  * @dev - Doc: https://wagmi.sh/core/api/actions/readContract
  */
-export async function hasWorldIDV3Badge(walletAddress: Address): Promise<boolean> {
+export async function hasWorldIDV3Badge(walletAddress: `0x${string}`): Promise<boolean> {
   try {
     const result = await readContract(wagmiConfig, {
       address: WORLD_ID_V3_BADGE_MANAGER_ADDRESS, // World Chain Sepolia
       abi: WORLD_ID_V3_BADGE_MANAGER_ABI,
       functionName: 'hasWorldIDV3Badge',
       args: [walletAddress],
-      chainId: wagmiConfig.chains[5].id, // World Chain Sepolia
+      chainId: WORLD_CHAIN_SEPOLIA_CHAIN_ID  // World Chain Sepolia
+      //chainId: wagmiConfig.chains[5].id,   // World Chain Sepolia
     }) as boolean;
 
     return result as boolean;
@@ -95,7 +99,8 @@ export async function verifyWorldIDV3Proof(
         externalNullifierHash,
         proof
       ],
-      chainId: wagmiConfig.chains[5].id, 
+      chainId: WORLD_CHAIN_SEPOLIA_CHAIN_ID
+      //chainId: wagmiConfig.chains[5].id, 
     });
 
     return hasProof as boolean;
