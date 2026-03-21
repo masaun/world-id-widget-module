@@ -9,3 +9,4 @@ import artifactOfWorldIDV3BadgeManager from '../artifacts/WorldIDV3BadgeManager.
  * This file contains all the contract ABIs used across the project
  */
 export const WORLD_ID_V3_BADGE_MANAGER_ABI = artifactOfWorldIDV3BadgeManager.abi as Abi
+

@@ -2,11 +2,17 @@
 import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
 import { useState } from 'react'
 
+// @dev - ABI of the WorldIDV3BadgeManager.sol
+import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
+
 interface WorldIdProps {
   onSuccess?: (result: ISuccessResult) => void;
   onError?: (error: Error) => void;
 }
 
+/**
+ * @title - The WorldIdVerification function
+ */
 export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ISuccessResult | null>(null);
@@ -14,6 +20,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your actual app_id
   const action = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
 
+  // @dev - The process if a World ID verification is successful.
   const handleVerify = (result: ISuccessResult) => {
     console.log("World ID verification successful:", result);
     setIsVerified(true);
@@ -21,8 +28,12 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
     if (onSuccess) {
       onSuccess(result);
     }
+
+    // TODO: Implement the on-chain logic
+    
   };
 
+  // @dev - The process if a World ID verification is failed.
   const handleError = (error: Error) => {
     console.error("World ID verification failed:", error);
     if (onError) {
