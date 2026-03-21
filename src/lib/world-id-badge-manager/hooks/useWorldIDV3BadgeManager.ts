@@ -26,8 +26,8 @@ export interface WorldIDV3BadgeData {
 export const useHasWorldIDV3Badge = () => {
   // @dev - Retrieve a connected wallet address
   const { address } = useAccount();
-  const connectedAddress: Address = address;
-  //const connectedAddress: Address = process.env.TEST_WALLET_ADDRESS;
+  //const connectedAddress: Address = address;
+  const connectedAddress: Address = process.env.TEST_WALLET_ADDRESS; // @dev - TEMPORARY
 
   const [badgeData, setBadgeData] = useState<WorldIDV3BadgeData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
