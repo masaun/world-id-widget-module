@@ -1,3 +1,5 @@
+// app/api/rp-signature/route.ts
+
 import { NextResponse } from "next/server";
 import type { IDKitResult } from "@worldcoin/idkit";
 //import { signRequest } from "@worldcoin/idkit/signing";

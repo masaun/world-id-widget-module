@@ -66,16 +66,39 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const [open, setOpen] = useState(false);
   const [rpContext, setRpContext] = useState<RpContext | null>(null);
 
+  // @dev - app_id and action (Source: World ID Developer Portal)
+  const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your app_id
+  const action = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
+  const rp_id = process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID || "WORLDCOIN_RP_ID is not set";;   // Replace with your rp_id
+  const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
+  console.log("app_id", app_id);
+  console.log("action", action);
+  console.log("rp_id", rp_id);
+
+  // const rpSig = await fetch("/api/rp-signature", {
+  //   method: "POST",
+  //   headers: { "content-type": "application/json" },
+  //   body: JSON.stringify({ action: "my-action" }),
+  // }).then((r) => r.json());
+
+  // const rp_context: RpContext = {
+  //   rp_id: rp_id, // Your app's `rp_id` from the Developer Portal
+  //   nonce: rpSig.nonce,
+  //   created_at: rpSig.created_at,
+  //   expires_at: rpSig.expires_at,
+  //   signature: rpSig.sig,
+  // };
+
   useEffect(() => {
     const fetchRp = async () => {
       const rpSig = await fetch("/api/rp-signature", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ action: "my-action" }),
+        body: JSON.stringify({ action: action }),
       }).then((r) => r.json());
 
       setRpContext({
-        rp_id: process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID!,
+        rp_id: rp_id!,
         nonce: rpSig.nonce,
         created_at: rpSig.created_at,
         expires_at: rpSig.expires_at,
@@ -86,11 +109,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
     fetchRp();
   }, []);
 
-
-  const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your actual app_id
-  const action = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
-
-
+  console.log("rpContext", rpContext);
 
   // // @dev - The process if a World ID verification is successful.
   // const handleVerify = async (result: ISuccessResult) => {
@@ -174,13 +193,17 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
             allow_legacy_proofs={true}
             // Signal (optional): Bind specific context into the requested proof.
             // Examples: user ID, wallet address. Your backend should enforce the same value.
-            preset={orbLegacy({ signal: "local-election-1" })}
+            preset={orbLegacy({ signal: userWalletAddress })}
 
             handleVerify={async (result) => {
+              console.log("result", result)
+              console.log("rpContext.rp_id", rpContext.rp_id)
+
               const response = await fetch("/api/verify-proof", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({
+                  //app_id: app_id,
                   rp_id: rpContext.rp_id,
                   idkitResponse: result,
                 }),
