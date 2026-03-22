@@ -30,7 +30,7 @@ export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
   root: bigint,
   signalHash: bigint,
   nullifierHash: bigint,
-  externalNullifierHash: bigint,
+  //externalNullifierHash: bigint,
   proof: Array<bigint>
 ): Promise<any> {
   try {
@@ -44,7 +44,7 @@ export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
         root,
         signalHash,
         nullifierHash,
-        externalNullifierHash,
+        //externalNullifierHash,
         proof
       ],
       chainId: WORLD_CHAIN_SEPOLIA_CHAIN_ID, // World Chain Sepolia
@@ -90,7 +90,7 @@ export async function verifyWorldIDV3Proof(
   root: bigint,
   signalHash: bigint,
   nullifierHash: bigint,
-  externalNullifierHash: bigint,
+  //externalNullifierHash: bigint,
   proof: Array<bigint>
 ): Promise<boolean> {
   try {
@@ -104,7 +104,7 @@ export async function verifyWorldIDV3Proof(
         root,
         signalHash,
         nullifierHash,
-        externalNullifierHash,
+        //externalNullifierHash,
         proof
       ],
       chainId: WORLD_CHAIN_SEPOLIA_CHAIN_ID
