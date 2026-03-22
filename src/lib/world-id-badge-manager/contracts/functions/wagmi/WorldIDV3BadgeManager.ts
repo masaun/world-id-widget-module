@@ -25,6 +25,8 @@ export const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.WORLD_ID_V3_BADGE_M
  * @dev - Doc: https://wagmi.sh/core/api/actions/writeContract
  */
 export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
+  appId: string,
+  actionId: string,
   root: bigint,
   signalHash: bigint,
   nullifierHash: bigint,
@@ -37,6 +39,8 @@ export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
       abi: WORLD_ID_V3_BADGE_MANAGER_ABI,
       functionName: 'verifyWorldIDV3ProofAndStoreIntoOnChainStorage',
       args: [
+        appId,
+        actionId,
         root,
         signalHash,
         nullifierHash,
@@ -81,11 +85,13 @@ export async function hasWorldIDV3Badge(walletAddress: `0x${string}`): Promise<b
  * @dev - Doc: https://wagmi.sh/core/api/actions/readContract
  */
 export async function verifyWorldIDV3Proof(
-  root: Number,
-  signalHash: Number,
-  nullifierHash: Number,
-  externalNullifierHash: Number,
-  proof: Array<Number>
+  appId: string,
+  actionId: string,
+  root: bigint,
+  signalHash: bigint,
+  nullifierHash: bigint,
+  externalNullifierHash: bigint,
+  proof: Array<bigint>
 ): Promise<boolean> {
   try {
     const hasProof = await readContract(wagmiConfig, {
@@ -93,6 +99,8 @@ export async function verifyWorldIDV3Proof(
       abi: WORLD_ID_V3_BADGE_MANAGER_ABI,
       functionName: 'hasWorldIDV3Badge',
       args: [
+        appId,
+        actionId,
         root,
         signalHash,
         nullifierHash,

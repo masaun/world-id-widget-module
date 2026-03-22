@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import {
   IDKitRequestWidget,
   orbLegacy,
-  type RpContext,
+  type RpContext
 } from '@worldcoin/idkit';
 import { hashSignal } from "@worldcoin/idkit-core/hashing";
 
@@ -68,11 +68,11 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
   // @dev - app_id and action (Source: World ID Developer Portal)
   const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your app_id
-  const action = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
+  const action_id = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
   const rp_id = process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID || "WORLDCOIN_RP_ID is not set";;   // Replace with your rp_id
   const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
   console.log("app_id", app_id);
-  console.log("action", action);
+  console.log("action_id", action_id);
   console.log("rp_id", rp_id);
 
   // const rpSig = await fetch("/api/rp-signature", {
@@ -94,7 +94,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
       const rpSig = await fetch("/api/rp-signature", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ action: action }),
+        body: JSON.stringify({ action: action_id }),
       }).then((r) => r.json());
 
       setRpContext({
@@ -188,7 +188,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
             app_id={app_id} // Your app's `app_id` from the Developer Portal
             // Action: Context that scopes what the user is proving uniqueness for
             // e.g., "verify-account-2026" or "claim-airdrop-2026".
-            action={action}
+            action={action_id}
             rp_context={rpContext}
             allow_legacy_proofs={true}
             // Signal (optional): Bind specific context into the requested proof.
@@ -199,6 +199,34 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               console.log("result", result)
 
               // TODO: Implement the "on-chain" verification code here for World ID "v3" Proof
+
+              // @dev - Invoke the verifyWorldIDV3ProofAndStoreIntoOnChainStorage() in the WorldIDV3BadgeManager.sol 
+              const root: bigint = result.merkle_root;
+              const signalHash: bigint = result.signal_hash; 
+              const nullifierHash: bigint = result.nullifier_hash; 
+              //const externalNullifierHash: bigint = 0; 
+              const unpackedProof = decodeAbiParameters(
+                [{ type: 'uint256[8]' }],
+                result.proof
+              )[0];
+
+              const txResult = await verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
+                app_id,
+                action_id,
+                root,
+                signalHash,
+                nullifierHash,
+                //externalNullifierHash,
+                unpackedProof
+              );
+
+              // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol 
+              const _hasWorldIDV3Badge = await hasWorldIDV3Badge(userWalletAddress);
+              //const hasWorldIDV3Badge = useHasWorldIDV3Badge();
+              console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
+
+
+
 
 
               // COMMENT OUT - The code below are "off-chain" verification code for World ID "v4" Proof.  
@@ -226,7 +254,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
         // <IDKitWidget
         //   app_id={app_id}
-        //   action={action}
+        //   action={action_id}
         //   verification_level={VerificationLevel.SecureDocument}
         //   onSuccess={handleVerify}
         //   onError={handleError}
