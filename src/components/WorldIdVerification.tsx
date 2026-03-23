@@ -204,60 +204,68 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               console.log("proof: ", result.responses[0].proof);
 
               // TODO: Implement the "on-chain" verification code here for World ID "v3" Proof
-              const response = result.responses[0];
-              console.log("response: ", response);
+              try {
+                const response = result.responses[0];
+                console.log("response:", response);
 
-              // const root = response.merkle_root;
-              // const signalHash = response.signal_hash; 
-              // const nullifierHash = response.nullifier; 
-              // //const externalNullifierHash: bigint = 0; 
-              // const unpackedProof = decodeAbiParameters(
-              //   [{ type: 'uint256[8]' }],
-              //   response.proof
-              // )[0];
+                const root = response.merkle_root;
+                console.log("root:", root);
 
-              // // @dev - Debugging
-              // console.log("root: ", root);
-              // console.log("signalHash: ", signalHash);
-              // console.log("nullifierHash: ", nullifierHash);
-              // console.log("unpackedProof: ", unpackedProof);
+                const signalHash = response.signal_hash;
+                console.log("signalHash:", signalHash);
 
-              // @dev - Invoke the verifyWorldIDV3Proof() in the WorldIDV3BadgeManager.sol 
-              await verifyWorldIDV3Proof(
-                app_id,
-                action_id,
-                //root,
-                result.responses[0].merkle_root,
-                //signalHash,
-                result.responses[0].signal_hash,
-                //nullifierHash,
-                result.responses[0].nullifier,
-                //externalNullifierHash,
-                //unpackedProof
-                result.responses[0].proof
-              );
+                const nullifierHash = response.nullifier;
+                console.log("nullifierHash:", nullifierHash);
 
-              // @dev - Invoke the verifyWorldIDV3ProofAndStoreIntoOnChainStorage() in the WorldIDV3BadgeManager.sol 
-              const txResult = await verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
-                app_id,
-                action_id,
-                //root,
-                result.responses[0].merkle_root,
-                //signalHash,
-                result.responses[0].signal_hash,
-                //nullifierHash,
-                result.responses[0].nullifier,
-                //externalNullifierHash,
-                //unpackedProof
-                result.responses[0].proof
-              );
+                const proof = response.proof;
+                console.log("proof:", proof);
 
-              // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol 
-              const _hasWorldIDV3Badge = await hasWorldIDV3Badge(userWalletAddress);
-              //const hasWorldIDV3Badge = useHasWorldIDV3Badge();
-              console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
+                //const externalNullifierHash: bigint = 0; 
+                const unpackedProof = decodeAbiParameters(
+                  [{ type: 'uint256[8]' }],
+                  proof
+                )[0];
 
+                // @dev - Debugging
+                console.log("root: ", root);
+                console.log("signalHash: ", signalHash);
+                console.log("nullifierHash: ", nullifierHash);
+                console.log("proof: ", proof);
+                console.log("unpackedProof: ", unpackedProof);
 
+                // @dev - Invoke the verifyWorldIDV3Proof() in the WorldIDV3BadgeManager.sol 
+                await verifyWorldIDV3Proof(
+                  app_id,
+                  action_id,
+                  root,
+                  signalHash,
+                  nullifierHash,
+                  //externalNullifierHash,
+                  unpackedProof
+                );
+
+                // @dev - Invoke the verifyWorldIDV3ProofAndStoreIntoOnChainStorage() in the WorldIDV3BadgeManager.sol 
+                const txResult = await verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
+                  app_id,
+                  action_id,
+                  //root,
+                  result.responses[0].merkle_root,
+                  //signalHash,
+                  result.responses[0].signal_hash,
+                  //nullifierHash,
+                  result.responses[0].nullifier,
+                  //externalNullifierHash,
+                  //unpackedProof
+                  result.responses[0].proof
+                );
+
+                // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol 
+                const _hasWorldIDV3Badge = await hasWorldIDV3Badge(userWalletAddress);
+                //const hasWorldIDV3Badge = useHasWorldIDV3Badge();
+                console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
+              } catch (err) {
+                console.error("🔥 ERROR inside handleVerify:", err);
+              }
 
 
 
