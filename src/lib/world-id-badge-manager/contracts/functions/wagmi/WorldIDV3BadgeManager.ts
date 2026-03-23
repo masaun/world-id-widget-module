@@ -18,7 +18,8 @@ import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/cont
 //import { NETWORK_SCHOOL_MEMBERSHIP_BADGE_MANAGER_ABI } from '@/lib/network-school-membership-verification-package/contracts/abis/abis';
 
 // @dev - The deployed contract address of the WorldIDV3BadgeManager.sol
-export const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.WORLD_ID_V3_BADGE_MANAGER_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
+export const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.NEXT_PUBLIC_WORLD_ID_V3_BADGE_MANAGER_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
+console.log("WORLD_ID_V3_BADGE_MANAGER_ADDRESS: ", WORLD_ID_V3_BADGE_MANAGER_ADDRESS);
 
 /** 
  * @notice - The verifyWorldIDV3ProofAndStoreIntoOnChainStorage() function of the WorldIDV3BadgeManager.sol
