@@ -11,8 +11,11 @@ import { hashSignal } from "@worldcoin/idkit-core/hashing";
 // @dev - Import the "@wagmi/core"
 //import { useAccount } from 'wagmi';
 
+// @dev - Library to decode ABI parameters, which is imported from the 'viem' library
+import { decodeAbiParameters } from 'viem';
+
 // @dev - Type of the contract ABI, which is imported from the 'viem' library
-import type { Abi, Address, decodeAbiParameters } from 'viem';
+import type { Abi, Address } from 'viem';
 
 // @dev - The functions, which is defined in the WorldIDV3BadgeManager.sol
 import { useHasWorldIDV3Badge } from '@/lib/world-id-badge-manager/hooks/useWorldIDV3BadgeManager'
