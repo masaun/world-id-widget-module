@@ -204,8 +204,6 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               console.log("proof: ", result.responses[0].proof);
 
               // TODO: Implement the "on-chain" verification code here for World ID "v3" Proof
-
-              // @dev - Invoke the verifyWorldIDV3ProofAndStoreIntoOnChainStorage() in the WorldIDV3BadgeManager.sol 
               const response = result.responses[0];
               console.log("response: ", response);
 
@@ -224,6 +222,22 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               // console.log("nullifierHash: ", nullifierHash);
               // console.log("unpackedProof: ", unpackedProof);
 
+              // @dev - Invoke the verifyWorldIDV3Proof() in the WorldIDV3BadgeManager.sol 
+              await verifyWorldIDV3Proof(
+                app_id,
+                action_id,
+                //root,
+                result.responses[0].merkle_root,
+                //signalHash,
+                result.responses[0].signal_hash,
+                //nullifierHash,
+                result.responses[0].nullifier,
+                //externalNullifierHash,
+                //unpackedProof
+                result.responses[0].proof
+              );
+
+              // @dev - Invoke the verifyWorldIDV3ProofAndStoreIntoOnChainStorage() in the WorldIDV3BadgeManager.sol 
               const txResult = await verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
                 app_id,
                 action_id,
