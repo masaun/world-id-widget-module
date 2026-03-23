@@ -92,12 +92,12 @@ export async function verifyWorldIDV3Proof(
   nullifierHash: bigint,
   //externalNullifierHash: bigint,
   proof: Array<bigint>
-): Promise<boolean> {
+) {
   try {
-    const hasProof = await readContract(wagmiConfig, {
+    await readContract(wagmiConfig, {
       address: WORLD_ID_V3_BADGE_MANAGER_ADDRESS, // World Chain Sepolia
       abi: WORLD_ID_V3_BADGE_MANAGER_ABI,
-      functionName: 'hasWorldIDV3Badge',
+      functionName: 'verifyWorldIDV3Proof',
       args: [
         appId,
         actionId,
@@ -111,7 +111,7 @@ export async function verifyWorldIDV3Proof(
       //chainId: wagmiConfig.chains[5].id, 
     });
 
-    return hasProof as boolean;
+    console.log("✅ Successful to pass the verifyWorldIDV3Proof()");
   } catch(error) {
     console.error(error);
     throw error; // Ensures function never returns undefined
