@@ -315,20 +315,19 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
 
               // COMMENT OUT - The code below are "off-chain" verification code for World ID "v4" Proof.  
-              //
-              // const response = await fetch("/api/verify-proof", {
-              //   method: "POST",
-              //   headers: { "content-type": "application/json" },
-              //   body: JSON.stringify({
-              //     //app_id: app_id,
-              //     rp_id: rpContext.rp_id,
-              //     idkitResponse: result,
-              //   }),
-              // });
+              const response = await fetch("/api/verify-proof", { // [Result]: Successful
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({
+                  //app_id: app_id,
+                  rp_id: rpContext.rp_id,
+                  idkitResponse: result,
+                }),
+              });
 
-              // if (!response.ok) {
-              //   throw new Error("Backend verification failed");
-              // }
+              if (!response.ok) {
+                throw new Error("Backend verification failed");
+              }
             }}
 
             onSuccess={(result) => {
