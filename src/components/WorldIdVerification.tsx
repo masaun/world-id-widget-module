@@ -4,32 +4,50 @@ import { useState, useEffect } from 'react'
 import {
   IDKitRequestWidget,
   orbLegacy,
-  type RpContext,
+  type RpContext
 } from '@worldcoin/idkit';
-import { hashSignal } from "@worldcoin/idkit-core/hashing";
+
+// // @dev - Hashing module for a signal
+// import { hashSignal } from "@worldcoin/idkit-core/hashing";
 
 // @dev - Import the "@wagmi/core"
 //import { useAccount } from 'wagmi';
 
-// @dev - Type of the contract ABI, which is imported from the 'viem' library
-import type { Abi, Address, decodeAbiParameters } from 'viem';
+// @dev - Library to decode ABI parameters, which is imported from the 'viem' library
+// import { decodeAbiParameters, parseAbiParameters } from 'viem';
 
-// @dev - The functions, which is defined in the WorldIDV3BadgeManager.sol
-import { useHasWorldIDV3Badge } from '@/lib/world-id-badge-manager/hooks/useWorldIDV3BadgeManager'
+// // @dev - Type of the contract ABI, which is imported from the 'viem' library
+// import type { Abi, Address } from 'viem';
 
-// @dev - Functions in the WorldIDV3BadgeManager.sol
-import {
-  verifyWorldIDV3ProofAndStoreIntoOnChainStorage,
-  verifyWorldIDV3Proof,
-  hasWorldIDV3Badge,
-  WORLD_ID_V3_BADGE_MANAGER_ADDRESS
-} from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManager'
+// // @dev - The functions, which is defined in the WorldIDV3BadgeManager.sol
+// import { useHasWorldIDV3Badge } from '@/lib/world-id-badge-manager/hooks/useWorldIDV3BadgeManager'
+
+// // @dev - Functions in the WorldIDV3BadgeManager.sol
+// import {
+//   verifyWorldIDV3ProofAndStoreIntoOnChainStorage,
+//   verifyWorldIDV3Proof,
+//   hasWorldIDV3Badge,
+//   WORLD_ID_V3_BADGE_MANAGER_ADDRESS
+// } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManager'
+
+// // @dev - TEMPORARY: Wagmi
+// import { writeContract, readContract } from '@wagmi/core';
+
+// // @dev - TEMPORARY: We should replace this depends on project
+// import { 
+//   wagmiConfig,
+//   //base, baseSepolia, worldchain, worldchainSepolia,
+//   WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
+// } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/config';
+
+// // @dev - TEMPORARY: ABI of the WorldIDV3BadgeManager.sol
+// import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
+
 
 interface WorldIdProps {
   onSuccess?: (result: ISuccessResult) => void;
   onError?: (error: Error) => void;
 }
-
 
 /**
  * @title - Generate the connect URL and collect proof
@@ -68,12 +86,12 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
   // @dev - app_id and action (Source: World ID Developer Portal)
   const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your app_id
-  const action = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
+  const action_id = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
   const rp_id = process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID || "WORLDCOIN_RP_ID is not set";;   // Replace with your rp_id
   const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
-  console.log("app_id", app_id);
-  console.log("action", action);
-  console.log("rp_id", rp_id);
+  console.log("app_id: ", app_id);
+  console.log("action_id: ", action_id);
+  console.log("rp_id: ", rp_id);
 
   // const rpSig = await fetch("/api/rp-signature", {
   //   method: "POST",
@@ -94,7 +112,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
       const rpSig = await fetch("/api/rp-signature", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ action: action }),
+        body: JSON.stringify({ action: action_id }),
       }).then((r) => r.json());
 
       setRpContext({
@@ -188,18 +206,95 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
             app_id={app_id} // Your app's `app_id` from the Developer Portal
             // Action: Context that scopes what the user is proving uniqueness for
             // e.g., "verify-account-2026" or "claim-airdrop-2026".
-            action={action}
+            action={action_id}
             rp_context={rpContext}
             allow_legacy_proofs={true}
             // Signal (optional): Bind specific context into the requested proof.
             // Examples: user ID, wallet address. Your backend should enforce the same value.
             preset={orbLegacy({ signal: userWalletAddress })}
+            //preset={orbLegacy({ signal: userWalletAddress })}
 
             handleVerify={async (result) => {
-              console.log("result", result)
-              console.log("rpContext.rp_id", rpContext.rp_id)
+              // @dev - Debugging
+              console.log("result: ", result);
+              console.log("merkle_root: ", result.responses[0].merkle_root);
+              console.log("signal_hash: ", result.responses[0].signal_hash);
+              console.log("nullifier: ", result.responses[0].nullifier);
+              console.log("proof: ", result.responses[0].proof);
 
-              const response = await fetch("/api/verify-proof", {
+              // -------------------------------------------------------- //
+              //      "On-chain" verification for World ID "v3" Proof     //
+              // -------------------------------------------------------- //
+              // try {
+              //   const response = result.responses[0];
+              //   console.log("response:", response);
+
+              //   const root = response.merkle_root;
+              //   console.log("root:", root);
+
+              //   const signalHash = response.signal_hash;
+              //   console.log("signalHash:", signalHash);
+
+              //   // ✅ recompute signal hash
+              //   //const signalHash = BigInt(hashSignal(userWalletAddress));
+              //   //console.log("signalHash:", signalHash);
+
+              //   const nullifierHash = response.nullifier;
+              //   console.log("nullifierHash:", nullifierHash);
+
+              //   const proof = response.proof;
+              //   console.log("proof:", proof);
+
+              //   //const externalNullifierHash: bigint = 0; 
+              //   const unpackedProof = decodeAbiParameters(
+              //     parseAbiParameters('uint256[8]'),
+              //     proof as `0x${string}`
+              //   )[0];
+
+              //   // @dev - Debugging
+              //   console.log("root: ", root);
+              //   console.log("signalHash: ", signalHash);
+              //   console.log("nullifierHash: ", nullifierHash);
+              //   console.log("proof: ", proof);
+              //   console.log("unpackedProof: ", unpackedProof);
+
+              //   // @dev - Invoke the verifyWorldIDV3Proof() in the WorldIDV3BadgeManager.sol 
+              //   await verifyWorldIDV3Proof(
+              //     app_id,
+              //     action_id,
+              //     BigInt(root),
+              //     BigInt(signalHash),
+              //     BigInt(nullifierHash),
+              //     //externalNullifierHash,
+              //     unpackedProof
+              //   );
+
+              //   // @dev - Invoke the verifyWorldIDV3ProofAndStoreIntoOnChainStorage() in the WorldIDV3BadgeManager.sol 
+              //   const txResult = await verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
+              //     app_id,
+              //     action_id,
+              //     root,
+              //     signalHash,
+              //     nullifierHash,
+              //     //externalNullifierHash,
+              //     unpackedProof
+              //   );
+
+              //   // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol 
+              //   const _hasWorldIDV3Badge = await hasWorldIDV3Badge(userWalletAddress);
+              //   //const hasWorldIDV3Badge = useHasWorldIDV3Badge();
+              //   console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
+              // } catch (err) {
+              //   console.error("🔥 ERROR inside handleVerify:", err);
+              // }
+
+
+
+              // --------------------------------------------------------------------------- //
+              //      "Off-chain" verification code for World ID v3 & v4 Uniquness Proof     //
+              // --------------------------------------------------------------------------- //
+              // @dev - "Off-chain" verification code for World ID v3 & v4 Uniquness Proof  
+              const response = await fetch("/api/verify-proof", { // [Result]: Successful
                 method: "POST",
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({
@@ -222,7 +317,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
         // <IDKitWidget
         //   app_id={app_id}
-        //   action={action}
+        //   action={action_id}
         //   verification_level={VerificationLevel.SecureDocument}
         //   onSuccess={handleVerify}
         //   onError={handleError}

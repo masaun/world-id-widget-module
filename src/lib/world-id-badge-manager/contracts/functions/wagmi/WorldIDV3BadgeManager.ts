@@ -18,18 +18,21 @@ import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/cont
 //import { NETWORK_SCHOOL_MEMBERSHIP_BADGE_MANAGER_ABI } from '@/lib/network-school-membership-verification-package/contracts/abis/abis';
 
 // @dev - The deployed contract address of the WorldIDV3BadgeManager.sol
-export const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.WORLD_ID_V3_BADGE_MANAGER_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
+export const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.NEXT_PUBLIC_WORLD_ID_V3_BADGE_MANAGER_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
+console.log("WORLD_ID_V3_BADGE_MANAGER_ADDRESS: ", WORLD_ID_V3_BADGE_MANAGER_ADDRESS);
 
 /** 
  * @notice - The verifyWorldIDV3ProofAndStoreIntoOnChainStorage() function of the WorldIDV3BadgeManager.sol
  * @dev - Doc: https://wagmi.sh/core/api/actions/writeContract
  */
 export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
-  root: bigint,
-  signalHash: bigint,
-  nullifierHash: bigint,
-  externalNullifierHash: bigint,
-  proof: Array<bigint>
+  appId: string,
+  actionId: string,
+  root: BigInt,
+  signalHash: BigInt,
+  nullifierHash: BigInt,
+  //externalNullifierHash: bigint,
+  proof: Array<BigInt>
 ): Promise<any> {
   try {
     const txResult = await writeContract(wagmiConfig, {
@@ -37,10 +40,12 @@ export async function verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
       abi: WORLD_ID_V3_BADGE_MANAGER_ABI,
       functionName: 'verifyWorldIDV3ProofAndStoreIntoOnChainStorage',
       args: [
+        appId,
+        actionId,
         root,
         signalHash,
         nullifierHash,
-        externalNullifierHash,
+        //externalNullifierHash,
         proof
       ],
       chainId: WORLD_CHAIN_SEPOLIA_CHAIN_ID, // World Chain Sepolia
@@ -81,29 +86,33 @@ export async function hasWorldIDV3Badge(walletAddress: `0x${string}`): Promise<b
  * @dev - Doc: https://wagmi.sh/core/api/actions/readContract
  */
 export async function verifyWorldIDV3Proof(
-  root: Number,
-  signalHash: Number,
-  nullifierHash: Number,
-  externalNullifierHash: Number,
-  proof: Array<Number>
-): Promise<boolean> {
+  appId: string,
+  actionId: string,
+  root: BigInt,
+  signalHash: BigInt,
+  nullifierHash: BigInt,
+  //externalNullifierHash: bigint,
+  proof: Array<BigInt>
+) {
   try {
-    const hasProof = await readContract(wagmiConfig, {
+    await readContract(wagmiConfig, {
       address: WORLD_ID_V3_BADGE_MANAGER_ADDRESS, // World Chain Sepolia
       abi: WORLD_ID_V3_BADGE_MANAGER_ABI,
-      functionName: 'hasWorldIDV3Badge',
+      functionName: 'verifyWorldIDV3Proof',
       args: [
+        appId as `app_${string}`,
+        actionId as string,
         root,
         signalHash,
         nullifierHash,
-        externalNullifierHash,
+        //externalNullifierHash,
         proof
       ],
       chainId: WORLD_CHAIN_SEPOLIA_CHAIN_ID
       //chainId: wagmiConfig.chains[5].id, 
     });
 
-    return hasProof as boolean;
+    console.log("✅ Successful to pass the verifyWorldIDV3Proof()");
   } catch(error) {
     console.error(error);
     throw error; // Ensures function never returns undefined
