@@ -240,6 +240,15 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
                 throw new Error("Backend verification failed");
               }
 
+              
+              // ----------------------------------------------------//
+              //      "On-chain" storage for World ID "v3" Proof     //
+              // --------------------------------------------------- //
+
+              // TODO: Add the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol to here.
+
+
+
               // -------------------------------------------------------- //
               //      "On-chain" verification for World ID "v3" Proof     //
               // -------------------------------------------------------- //
