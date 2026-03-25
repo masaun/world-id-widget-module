@@ -58,27 +58,9 @@ interface WorldIdProps {
 }
 
 /**
- * @title - Generate the connect URL and collect proof
- * @dev - This API request for backend will be sent to the /app/api/rp-signature/route.ts through Next.js App Router 
- * @dev - Doc: https://docs.world.org/world-id/idkit/integrate#step-4-generate-the-connect-url-and-collect-proof
- */
-// const rpSig = await fetch("/api/rp-signature", {
-//   method: "POST",
-//   headers: { "content-type": "application/json" },
-//   body: JSON.stringify({ action: "my-action" }),
-// }).then((r) => r.json());
-
-// const rp_context: RpContext = {
-//   rp_id: process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID, // Your app's `rp_id` from the Developer Portal
-//   nonce: rpSig.nonce,
-//   created_at: rpSig.created_at,
-//   expires_at: rpSig.expires_at,
-//   signature: rpSig.sig,
-// };
-
-
-/**
- * @title - The WorldIdVerification function
+ * @title - The WorldId Verification function
+ * @dev - At this point, the World ID v3 Proof can be verified here with the World ID v4 SDK. 
+ * @dev - The World ID v3 Proof verification is done off-chain using the World ID v4 SDK. 
  */
 export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const [isVerified, setIsVerified] = useState(false);
@@ -105,7 +87,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
   useEffect(() => {
     const fetchRp = async () => {
-      // @dev - Call a RP signature from backend
+      // @dev - Call a RP signature from backend (Directory: app/api/rp-signature/route.ts)
       const rpSig = await fetch("/api/rp-signature", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -202,6 +184,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   // @dev - The following "hasHandledSuccess" implementation is to avoid that the same on-chain function is unintentionally called twice.
   const hasHandledSuccess = useRef(false);
   
+  // @dev - Invoke the storeVerifiedWorldIDV3ProofData() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
   const handleSuccess = async (result: any) => {
     // @dev - Using the "hasHandledSuccess" to avoid that the same on-chain function is unintentionally called twice.
     if (hasHandledSuccess.current) return;
@@ -220,6 +203,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
       const nullifier = response.nullifier;
       const proof = response.proof;
 
+      // @dev - Invoke the storeVerifiedWorldIDV3ProofData() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
       await storeVerifiedWorldIDV3ProofData(
         app_id,
         action_id,
@@ -244,6 +228,16 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
       console.error("🔥 ERROR inside handleSuccess:", err);
     }
   };
+
+  // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
+  const handleHasWorldIDV3Badge = async () => {
+    try {
+      const _hasWorldIDV3Badge = await hasWorldIDV3Badge(callerAddress);
+      console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
+    } catch (err) {
+      console.error("🔥 ERROR inside handleHasWorldIDV3Badge:", err);
+    }
+  }
 
   // @dev - The process if a World ID verification is failed.
   const handleError = (error: Error) => {
