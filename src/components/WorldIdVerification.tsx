@@ -51,11 +51,6 @@ export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 // @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
 import { getConnection } from '@wagmi/core';
-const connection = getConnection(wagmiConfig);
-const callerAddress = connection.address;
-console.log("connection: ", connection);
-console.log("callerAddress: ", callerAddress);
-
 
 interface WorldIdProps {
   onSuccess?: (result: ISuccessResult) => void;
@@ -86,10 +81,6 @@ interface WorldIdProps {
  * @title - The WorldIdVerification function
  */
 export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
-  // @dev - Retrieve a connected wallet address
-  //const { address } = useAccount();
-  //const connectedAddress = address;
-
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ISuccessResult | null>(null);
 
@@ -106,14 +97,22 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   console.log("action_id: ", action_id);
   console.log("rp_id: ", rp_id);
 
+  // @dev - Variables for the connected wallet address
+  let connection = getConnection(wagmiConfig);
+  let callerAddress = connection.address;
+  //const [connection, setConnection] = useState(null);
+  //const [callerAddress, setCallerAddres] = useState(null);
+
   useEffect(() => {
     const fetchRp = async () => {
+      // @dev - Call a RP signature from backend
       const rpSig = await fetch("/api/rp-signature", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ action: action_id }),
       }).then((r) => r.json());
 
+      // @dev - Store a RP signature
       setRpContext({
         rp_id: rp_id!,
         nonce: rpSig.nonce,
@@ -121,6 +120,12 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
         expires_at: rpSig.expires_at,
         signature: rpSig.sig,
       });
+
+      // @dev - Retrieve a connected wallet address
+      connection = getConnection(wagmiConfig);
+      callerAddress = connection.address;
+      console.log("connection: ", connection);
+      console.log("callerAddress: ", callerAddress);
     };
 
     fetchRp();
@@ -250,129 +255,133 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
   return (
     <div className="world-id-container">
-      {!isVerified ? (
-        <>
-          {/* ✅ Your button */}
-          <button
-            onClick={() => setOpen(true)}
-            disabled={!rpContext}
-            className="world-id-button"
-            style={{
-              backgroundColor: '#000000',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '12px 24px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              marginTop: '10px'
-            }}
-          >
-            🌍 Verify with World ID
-          </button>
+      {callerAddress && (
+        !isVerified ? (
 
-          {/* ✅ The widget (modal only) */}
-          <IDKitRequestWidget
-            open={open}
-            onOpenChange={setOpen}
-            app_id={app_id} // Your app's `app_id` from the Developer Portal
-            // Action: Context that scopes what the user is proving uniqueness for
-            // e.g., "verify-account-2026" or "claim-airdrop-2026".
-            action={action_id}
-            rp_context={rpContext}
-            allow_legacy_proofs={true}
-            // Signal (optional): Bind specific context into the requested proof.
-            // Examples: user ID, wallet address. Your backend should enforce the same value.
-            preset={orbLegacy({ signal: callerAddress })}
-            //preset={orbLegacy({ signal: userWalletAddress })}
+        //{!isVerified ? (
+          <>
+            {/* ✅ Your button */}
+            <button
+              onClick={() => setOpen(true)}
+              disabled={!rpContext}
+              className="world-id-button"
+              style={{
+                backgroundColor: '#000000',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                marginTop: '10px'
+              }}
+            >
+              🌍 Verify with World ID
+            </button>
 
-            handleVerify={handleVerify}
+            {/* ✅ The widget (modal only) */}
+            <IDKitRequestWidget
+              open={open}
+              onOpenChange={setOpen}
+              app_id={app_id} // Your app's `app_id` from the Developer Portal
+              // Action: Context that scopes what the user is proving uniqueness for
+              // e.g., "verify-account-2026" or "claim-airdrop-2026".
+              action={action_id}
+              rp_context={rpContext}
+              allow_legacy_proofs={true}
+              // Signal (optional): Bind specific context into the requested proof.
+              // Examples: user ID, wallet address. Your backend should enforce the same value.
+              preset={orbLegacy({ signal: callerAddress })}
+              //preset={orbLegacy({ signal: userWalletAddress })}
 
-            onSuccess={handleSuccess}
+              handleVerify={handleVerify}
 
-            onError={handleError}
-          />
-        </>
+              onSuccess={handleSuccess}
 
-        // <IDKitWidget
-        //   app_id={app_id}
-        //   action={action_id}
-        //   verification_level={VerificationLevel.SecureDocument}
-        //   onSuccess={handleVerify}
-        //   onError={handleError}
-        //   credential_types={["secure document"]}
-        //   //credential_types={["orb", "phone"]}
-        //   enableTelemetry
-        // >
-        //   {({ open }: { open: () => void }) => (
-        //     <button 
-        //       onClick={open}
-        //       className="world-id-button"
-        //       style={{
-        //         backgroundColor: '#000000',
-        //         color: 'white',
-        //         border: 'none',
-        //         borderRadius: '8px',
-        //         padding: '12px 24px',
-        //         fontSize: '16px',
-        //         fontWeight: '600',
-        //         cursor: 'pointer',
-        //         transition: 'all 0.2s ease',
-        //         marginTop: '10px'
-        //       }}
-        //     >
-        //       🌍 Verify with World ID
-        //     </button>
-        //   )}
-        // </IDKitWidget>
-      ) : (
-        <div className="verification-success" style={{ 
-          padding: '16px', 
-          backgroundColor: '#f0f9ff', 
-          border: '1px solid #0ea5e9', 
-          borderRadius: '8px',
-          marginTop: '10px'
-        }}>
-          <p style={{ margin: 0, color: '#0c4a6e', fontWeight: '600' }}>
-            ✅ World ID Verified Successfully!
-          </p>
-          {verificationResult && (
-            <details style={{ marginTop: '8px' }}>
-              <summary style={{ cursor: 'pointer', color: '#0369a1' }}>
-                View Verification Details
-              </summary>
-              <pre style={{ 
-                fontSize: '12px', 
-                backgroundColor: '#e0f2fe', 
-                padding: '8px', 
-                borderRadius: '4px',
-                overflow: 'auto',
+              onError={handleError}
+            />
+          </>
+
+          // <IDKitWidget
+          //   app_id={app_id}
+          //   action={action_id}
+          //   verification_level={VerificationLevel.SecureDocument}
+          //   onSuccess={handleVerify}
+          //   onError={handleError}
+          //   credential_types={["secure document"]}
+          //   //credential_types={["orb", "phone"]}
+          //   enableTelemetry
+          // >
+          //   {({ open }: { open: () => void }) => (
+          //     <button 
+          //       onClick={open}
+          //       className="world-id-button"
+          //       style={{
+          //         backgroundColor: '#000000',
+          //         color: 'white',
+          //         border: 'none',
+          //         borderRadius: '8px',
+          //         padding: '12px 24px',
+          //         fontSize: '16px',
+          //         fontWeight: '600',
+          //         cursor: 'pointer',
+          //         transition: 'all 0.2s ease',
+          //         marginTop: '10px'
+          //       }}
+          //     >
+          //       🌍 Verify with World ID
+          //     </button>
+          //   )}
+          // </IDKitWidget>
+        ) : (
+          <div className="verification-success" style={{ 
+            padding: '16px', 
+            backgroundColor: '#f0f9ff', 
+            border: '1px solid #0ea5e9', 
+            borderRadius: '8px',
+            marginTop: '10px'
+          }}>
+            <p style={{ margin: 0, color: '#0c4a6e', fontWeight: '600' }}>
+              ✅ World ID Verified Successfully!
+            </p>
+            {verificationResult && (
+              <details style={{ marginTop: '8px' }}>
+                <summary style={{ cursor: 'pointer', color: '#0369a1' }}>
+                  View Verification Details
+                </summary>
+                <pre style={{ 
+                  fontSize: '12px', 
+                  backgroundColor: '#e0f2fe', 
+                  padding: '8px', 
+                  borderRadius: '4px',
+                  overflow: 'auto',
+                  marginTop: '8px'
+                }}>
+                  {JSON.stringify(verificationResult, null, 2)}
+                </pre>
+              </details>
+            )}
+            <button 
+              onClick={() => {
+                setIsVerified(false);
+                setVerificationResult(null);
+              }}
+              style={{
+                backgroundColor: '#6b7280',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                cursor: 'pointer',
                 marginTop: '8px'
-              }}>
-                {JSON.stringify(verificationResult, null, 2)}
-              </pre>
-            </details>
-          )}
-          <button 
-            onClick={() => {
-              setIsVerified(false);
-              setVerificationResult(null);
-            }}
-            style={{
-              backgroundColor: '#6b7280',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '8px 16px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              marginTop: '8px'
-            }}
-          >
-            Reset Verification
-          </button>
-        </div>
+              }}
+            >
+              Reset Verification
+            </button>
+          </div>
+        )
       )}
     </div>
   );
