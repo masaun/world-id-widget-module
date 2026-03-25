@@ -2,6 +2,8 @@ import { createConfig, http, fallback } from '@wagmi/core'
 import { base, celo, baseSepolia } from '@wagmi/core/chains'
 import type { Chain } from 'wagmi/chains'
 
+import { wagmiAdapter, projectId, networks } from '@/config'
+
 // @dev - Chain ID for World Chain
 export const WORLD_CHAIN_MAINNET_CHAIN_ID = 480;
 export const WORLD_CHAIN_SEPOLIA_CHAIN_ID = 4801;

@@ -30,6 +30,14 @@ import {
 //   WORLD_ID_V3_BADGE_MANAGER_ADDRESS
 // } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManager'
 
+// @dev - Functions in the WorldIDV3BadgeManager.sol
+import {
+  storeVerifiedWorldIDV3ProofData,
+  getVerifiedWorldIDV3ProofData,
+  hasWorldIDV3Badge,
+  WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS
+} from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManagerForOffChainVerifiedProof'
+
 // // @dev - TEMPORARY: Wagmi
 // import { writeContract, readContract } from '@wagmi/core';
 
@@ -246,8 +254,60 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               // --------------------------------------------------- //
 
               // TODO: Add the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol to here.
+              try {
+                const nonce = result.nonce;
+                console.log("nonce:", nonce);
 
+                const environment = result.environment;
+                console.log("environment:", environment);
 
+                const protocolVersion = result.protocol_version;
+                console.log("protocolVersion:", protocolVersion);
+
+                const response = result.responses[0];
+                console.log("response:", response);
+              
+                const identifier = response.identifier;
+                console.log("identifier:", identifier);
+
+                const merkleRoot = response.merkle_root;
+                console.log("merkleRoot:", merkleRoot);
+              
+                const signalHash = response.signal_hash;
+                console.log("signalHash:", signalHash);
+              
+                // ✅ recompute signal hash
+                //const signalHash = BigInt(hashSignal(userWalletAddress));
+                //console.log("signalHash:", signalHash);
+              
+                const nullifier = response.nullifier;
+                console.log("nullifier:", nullifier);
+              
+                const proof = response.proof;
+                console.log("proof:", proof);
+
+                // @dev - Invoke the storeVerifiedWorldIDV3ProofData() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol 
+                await storeVerifiedWorldIDV3ProofData(
+                  app_id,
+                  action_id,
+                  rp_id,
+                  nonce,
+                  identifier, // "orb"
+                  merkleRoot,
+                  nullifier,
+                  proof,
+                  signalHash,
+                  environment,      // "production"
+                  protocolVersion   // "3.0"
+                );
+
+                // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol 
+                const _hasWorldIDV3Badge = await hasWorldIDV3Badge(userWalletAddress);
+                //const hasWorldIDV3Badge = useHasWorldIDV3Badge();
+                console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
+              } catch (err) {
+                console.error("🔥 ERROR inside handleVerify:", err);
+              }
 
               // -------------------------------------------------------- //
               //      "On-chain" verification for World ID "v3" Proof     //

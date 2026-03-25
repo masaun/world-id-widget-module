@@ -15,7 +15,6 @@ import {
 
 // @dev - ABI of the WorldIDV3BadgeManager.sol
 import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
-//import { NETWORK_SCHOOL_MEMBERSHIP_BADGE_MANAGER_ABI } from '@/lib/network-school-membership-verification-package/contracts/abis/abis';
 
 // @dev - The deployed contract address of the WorldIDV3BadgeManager.sol
 export const WORLD_ID_V3_BADGE_MANAGER_ADDRESS = process.env.NEXT_PUBLIC_WORLD_ID_V3_BADGE_MANAGER_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;

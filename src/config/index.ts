@@ -18,4 +18,5 @@ export const wagmiAdapter = new WagmiAdapter({
   networks
 })
 
+// @dev - Get a wagmiConfig instance
 export const config = wagmiAdapter.wagmiConfig
