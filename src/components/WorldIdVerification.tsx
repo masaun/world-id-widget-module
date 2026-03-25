@@ -191,6 +191,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
           {/* ✅ Your button */}
           <button
             onClick={() => setOpen(true)}
+            disabled={!rpContext}
             className="world-id-button"
             style={{
               backgroundColor: '#000000',
