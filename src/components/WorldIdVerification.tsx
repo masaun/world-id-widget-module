@@ -10,9 +10,6 @@ import {
 // // @dev - Hashing module for a signal
 // import { hashSignal } from "@worldcoin/idkit-core/hashing";
 
-// @dev - Import the "@wagmi/core"
-//import { useAccount } from 'wagmi';
-
 // @dev - Library to decode ABI parameters, which is imported from the 'viem' library
 // import { decodeAbiParameters, parseAbiParameters } from 'viem';
 
@@ -38,8 +35,8 @@ import {
   WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS
 } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManagerForOffChainVerifiedProof'
 
-// // @dev - TEMPORARY: Wagmi
-// import { writeContract, readContract } from '@wagmi/core';
+// // @dev - TEMPORARY: ABI of the WorldIDV3BadgeManager.sol
+// import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
 
 // // @dev - TEMPORARY: We should replace this depends on project
 // import { 
@@ -48,8 +45,16 @@ import {
 //   WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
 // } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/config';
 
-// // @dev - TEMPORARY: ABI of the WorldIDV3BadgeManager.sol
-// import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
+// @dev - AppKit based wagmiConfig
+import { wagmiAdapter, projectId, networks } from '@/config'
+export const wagmiConfig = wagmiAdapter.wagmiConfig;
+
+// @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
+import { getConnection } from '@wagmi/core';
+const connection = getConnection(wagmiConfig);
+const callerAddress = connection.address;
+console.log("connection: ", connection);
+console.log("callerAddress: ", callerAddress);
 
 
 interface WorldIdProps {
@@ -96,7 +101,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your app_id
   const action_id = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
   const rp_id = process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID || "WORLDCOIN_RP_ID is not set";;   // Replace with your rp_id
-  const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
+  //const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
   console.log("app_id: ", app_id);
   console.log("action_id: ", action_id);
   console.log("rp_id: ", rp_id);
@@ -220,7 +225,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
             allow_legacy_proofs={true}
             // Signal (optional): Bind specific context into the requested proof.
             // Examples: user ID, wallet address. Your backend should enforce the same value.
-            preset={orbLegacy({ signal: userWalletAddress })}
+            preset={orbLegacy({ signal: callerAddress })}
             //preset={orbLegacy({ signal: userWalletAddress })}
 
             handleVerify={async (result) => {
@@ -303,7 +308,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
                 );
 
                 // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol 
-                const _hasWorldIDV3Badge = await hasWorldIDV3Badge(userWalletAddress);
+                const _hasWorldIDV3Badge = await hasWorldIDV3Badge(callerAddress);
                 //const hasWorldIDV3Badge = useHasWorldIDV3Badge();
                 console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
               } catch (err) {

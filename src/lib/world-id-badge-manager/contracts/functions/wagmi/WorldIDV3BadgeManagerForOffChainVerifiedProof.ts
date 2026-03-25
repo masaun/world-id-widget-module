@@ -5,9 +5,15 @@ import { getConnection, writeContract, readContract } from '@wagmi/core';
 // @dev - Type of the contract ABI, which is imported from the 'viem' library
 import type { Abi, Address } from 'viem';
 
-// @dev - AppKit
+// @dev - AppKit based wagmiConfig
 import { wagmiAdapter, projectId, networks } from '@/config'
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
+
+// @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
+const connection = getConnection(wagmiConfig);
+const callerAddress = connection.address;
+console.log("connection: ", connection);
+console.log("callerAddress: ", callerAddress);
 
 // @dev - TODO: We should replace this depends on project
 import { 
@@ -23,13 +29,6 @@ import { WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ABI } from '@/li
 // @dev - The deployed contract address of the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
 export const WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS = process.env.NEXT_PUBLIC_WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
 console.log("WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS: ", WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS);
-
-
-// @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
-const connection = getConnection(wagmiConfig);
-const callerAddress = connection.address;
-console.log("connection: ", connection);
-console.log("callerAddress: ", callerAddress);
 
 /** 
  * @notice - The storeVerifiedWorldIDV3ProofData() function of the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
