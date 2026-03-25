@@ -106,20 +106,6 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   console.log("action_id: ", action_id);
   console.log("rp_id: ", rp_id);
 
-  // const rpSig = await fetch("/api/rp-signature", {
-  //   method: "POST",
-  //   headers: { "content-type": "application/json" },
-  //   body: JSON.stringify({ action: "my-action" }),
-  // }).then((r) => r.json());
-
-  // const rp_context: RpContext = {
-  //   rp_id: rp_id, // Your app's `rp_id` from the Developer Portal
-  //   nonce: rpSig.nonce,
-  //   created_at: rpSig.created_at,
-  //   expires_at: rpSig.expires_at,
-  //   signature: rpSig.sig,
-  // };
-
   useEffect(() => {
     const fetchRp = async () => {
       const rpSig = await fetch("/api/rp-signature", {
@@ -181,6 +167,32 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   //   console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
   // };
 
+  const handleVerify= async (result) => {
+    // @dev - Debugging
+    console.log("result: ", result);
+    console.log("merkle_root: ", result.responses[0].merkle_root);
+    console.log("signal_hash: ", result.responses[0].signal_hash);
+    console.log("nullifier: ", result.responses[0].nullifier);
+    console.log("proof: ", result.responses[0].proof);
+
+    // --------------------------------------------------------------------------- //
+    //      "Off-chain" verification code for World ID v3 & v4 Uniquness Proof     //
+    // --------------------------------------------------------------------------- //
+    // @dev - "Off-chain" verification code for World ID v3 & v4 Uniquness Proof  
+    const response = await fetch("/api/verify-proof", { // [Result]: Successful
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        //app_id: app_id,
+        rp_id: rpContext.rp_id,
+        idkitResponse: result,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Backend verification failed");
+    }
+  }
 
   const handleSuccess = async (result: any) => {
     try {
@@ -268,32 +280,33 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
             preset={orbLegacy({ signal: callerAddress })}
             //preset={orbLegacy({ signal: userWalletAddress })}
 
-            handleVerify={async (result) => {
-              // @dev - Debugging
-              console.log("result: ", result);
-              console.log("merkle_root: ", result.responses[0].merkle_root);
-              console.log("signal_hash: ", result.responses[0].signal_hash);
-              console.log("nullifier: ", result.responses[0].nullifier);
-              console.log("proof: ", result.responses[0].proof);
+            handleVerify={handleVerify}
+            // handleVerify={async (result) => {
+            //   // @dev - Debugging
+            //   console.log("result: ", result);
+            //   console.log("merkle_root: ", result.responses[0].merkle_root);
+            //   console.log("signal_hash: ", result.responses[0].signal_hash);
+            //   console.log("nullifier: ", result.responses[0].nullifier);
+            //   console.log("proof: ", result.responses[0].proof);
 
-              // --------------------------------------------------------------------------- //
-              //      "Off-chain" verification code for World ID v3 & v4 Uniquness Proof     //
-              // --------------------------------------------------------------------------- //
-              // @dev - "Off-chain" verification code for World ID v3 & v4 Uniquness Proof  
-              const response = await fetch("/api/verify-proof", { // [Result]: Successful
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({
-                  //app_id: app_id,
-                  rp_id: rpContext.rp_id,
-                  idkitResponse: result,
-                }),
-              });
+            //   // --------------------------------------------------------------------------- //
+            //   //      "Off-chain" verification code for World ID v3 & v4 Uniquness Proof     //
+            //   // --------------------------------------------------------------------------- //
+            //   // @dev - "Off-chain" verification code for World ID v3 & v4 Uniquness Proof  
+            //   const response = await fetch("/api/verify-proof", { // [Result]: Successful
+            //     method: "POST",
+            //     headers: { "content-type": "application/json" },
+            //     body: JSON.stringify({
+            //       //app_id: app_id,
+            //       rp_id: rpContext.rp_id,
+            //       idkitResponse: result,
+            //     }),
+            //   });
 
-              if (!response.ok) {
-                throw new Error("Backend verification failed");
-              }
-            }}
+            //   if (!response.ok) {
+            //     throw new Error("Backend verification failed");
+            //   }
+            // }}
 
             onSuccess={handleSuccess}
 
