@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 //import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
 import {
   IDKitRequestWidget,
@@ -194,7 +194,14 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
     }
   }
 
+  // @dev - The following "hasHandledSuccess" implementation is to avoid that the same on-chain function is unintentionally called twice.
+  const hasHandledSuccess = useRef(false);
+  
   const handleSuccess = async (result: any) => {
+    // @dev - Using the "hasHandledSuccess" to avoid that the same on-chain function is unintentionally called twice.
+    if (hasHandledSuccess.current) return;
+    hasHandledSuccess.current = true;
+
     try {
       const nonce = result.nonce;
       const environment = result.environment;
