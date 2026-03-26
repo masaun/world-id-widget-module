@@ -1,8 +1,9 @@
 'use client'
 // import { cookieStorage, createStorage, http } from '@wagmi/core'
 import { ConnectButton } from "@/components/ConnectButton";
-import { InfoList } from "@/components/InfoList";
-import { ActionButtonList } from "@/components/ActionButtonList";
+//import { InfoList } from "@/components/InfoList";
+//import { ActionButtonList } from "@/components/ActionButtonList";
+import ConnectedNetwork from "@/components/ConnectedNetwork";
 import { WorldIdVerification } from "@/components/WorldIdVerification";
 import Image from 'next/image';
 
@@ -15,7 +16,13 @@ export default function Home() {
       <h1>World ID Widget Module</h1>
 
       <ConnectButton />
+
+      <br />
+
+      <ConnectedNetwork />
       
+      <br />
+
       <WorldIdVerification 
         onSuccess={(result) => {
           console.log("World ID verification completed:", result);
