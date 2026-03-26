@@ -38,18 +38,18 @@ import {
 // // @dev - TEMPORARY: ABI of the WorldIDV3BadgeManager.sol
 // import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
 
-// // @dev - TEMPORARY: We should replace this depends on project
+// // @dev - TEMPORARY: Import the "wagmiConfig" 
 // import { 
 //   wagmiConfig,
 //   //base, baseSepolia, worldchain, worldchainSepolia,
 //   WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
-// } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/config';
+// } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
-// @dev - AppKit based wagmiConfig
-import { wagmiAdapter, projectId, networks } from '@/config'
+// @dev - Create the "wagmiConfig" using the "wagmiAdapter" of AppKit
+import { wagmiAdapter, projectId, networks } from '@/config/wagmi'
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
-// @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
+// @dev - Get a caller address via the @wagmi/core v2 (Source: https://wagmi.sh/core/api/actions/getConnection)
 import { getConnection } from '@wagmi/core';
 
 // @dev - CSS

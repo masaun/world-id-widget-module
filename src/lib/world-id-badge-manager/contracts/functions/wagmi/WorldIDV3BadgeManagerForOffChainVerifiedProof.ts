@@ -6,7 +6,7 @@ import { getConnection, writeContract, readContract } from '@wagmi/core';
 import type { Abi, Address } from 'viem';
 
 // @dev - AppKit based wagmiConfig
-import { wagmiAdapter, projectId, networks } from '@/config'
+import { wagmiAdapter, projectId, networks } from '@/config/wagmi'
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 // @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
@@ -20,7 +20,7 @@ import {
   //wagmiConfig,
   //base, baseSepolia, worldchain, worldchainSepolia,
   WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
-} from '@/lib/world-id-badge-manager/contracts/functions/wagmi/config';
+} from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 //import { wagmiConfig } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
 // @dev - ABI of the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
