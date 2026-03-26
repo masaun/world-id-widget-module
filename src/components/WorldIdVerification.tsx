@@ -218,6 +218,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
         protocolVersion
       );
 
+      // @dev - hasWorldIDV3Badge() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
       const _hasWorldIDV3Badge = await hasWorldIDV3Badge(callerAddress);
       console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
 
@@ -251,8 +252,6 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
     <div className="world-id-container">
       {callerAddress && (
         !isVerified ? (
-
-        //{!isVerified ? (
           <>
             {/* ✅ Your button */}
             <button
@@ -260,7 +259,8 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               disabled={!rpContext}
               className="world-id-button"
               style={{
-                backgroundColor: '#000000',
+                backgroundColor: rpContext ? '#000000' : '#9ca3af', // black => gray
+                //backgroundColor: '#000000',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
@@ -337,7 +337,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
             marginTop: '10px'
           }}>
             <p style={{ margin: 0, color: '#0c4a6e', fontWeight: '600' }}>
-              ✅ World ID Verified Successfully!
+              ✅ Successful to verify your World ID v3 Proof!!
             </p>
             {verificationResult && (
               <details style={{ marginTop: '8px' }}>
