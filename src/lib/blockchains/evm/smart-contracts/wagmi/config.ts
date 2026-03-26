@@ -3,7 +3,7 @@ import { base, celo, baseSepolia } from '@wagmi/core/chains'
 import type { Chain } from 'wagmi/chains'
 
 // @dev - Import from Wagmi related modules from the Reown AppKit
-import { wagmiAdapter, projectId, networks } from '@/config'
+import { wagmiAdapter, projectId, networks } from '@/config/wagmi'
 
 // @dev - Chain ID for World Chain
 export const WORLD_CHAIN_MAINNET_CHAIN_ID = 480;

@@ -46,10 +46,10 @@ import {
 // } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
 // @dev - Create the "wagmiConfig" using the "wagmiAdapter" of AppKit
-import { wagmiAdapter, projectId, networks } from '@/config'
+import { wagmiAdapter, projectId, networks } from '@/config/wagmi'
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
-// @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
+// @dev - Get a caller address via the @wagmi/core v2 (Source: https://wagmi.sh/core/api/actions/getConnection)
 import { getConnection } from '@wagmi/core';
 
 // @dev - CSS

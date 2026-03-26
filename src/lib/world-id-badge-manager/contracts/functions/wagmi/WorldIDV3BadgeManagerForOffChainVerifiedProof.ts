@@ -6,7 +6,7 @@ import { getConnection, writeContract, readContract } from '@wagmi/core';
 import type { Abi, Address } from 'viem';
 
 // @dev - AppKit based wagmiConfig
-import { wagmiAdapter, projectId, networks } from '@/config'
+import { wagmiAdapter, projectId, networks } from '@/config/wagmi'
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 // @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
