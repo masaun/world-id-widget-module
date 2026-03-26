@@ -44,7 +44,7 @@ This application serves as a reference implementation for developers looking to 
 
 3. **Configure environment variables:**
    ```bash
-   cp .env.local.example .env.local
+   cp .env.example .env
    ```
    
    Update the following variables in `.env.local`:

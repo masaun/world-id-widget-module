@@ -40,12 +40,12 @@ import {
 // // @dev - TEMPORARY: ABI of the WorldIDV3BadgeManager.sol
 // import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
 
-// // @dev - TEMPORARY: Import the "wagmiConfig" 
-// import { 
-//   wagmiConfig,
-//   //base, baseSepolia, worldchain, worldchainSepolia,
-//   WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
-// } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
+// @dev - Import the "wagmiConfig" 
+import { 
+  //wagmiConfig,
+  //base, baseSepolia, worldchain, worldchainSepolia,
+  WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
+} from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
 // @dev - Create the "wagmiConfig" using the "wagmiAdapter" of AppKit
 import { wagmiAdapter, projectId, networks } from '@/config/wagmi'
@@ -72,6 +72,10 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   // @dev - Variable for spinner icon-running
   const [isLoading, setIsLoading] = useState(false);
 
+  // @dev - Variables for on-chain TXs
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [txUrl, setTxUrl] = useState<string | null>(null);
+
   // @dev - Variables for the World ID Proof verification
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ISuccessResult | null>(null);
@@ -85,6 +89,8 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const action_id = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
   const rp_id = process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID || "WORLDCOIN_RP_ID is not set";;   // Replace with your rp_id
   //const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
+  const worldScanSepolia = process.env.NEXT_PUBLIC_WORLD_SCAN_SEPOLIA;
+  const worldScanMainnet = process.env.NEXT_PUBLIC_WORLD_SCAN_MAINNET;
   console.log("app_id: ", app_id);
   console.log("action_id: ", action_id);
   console.log("rp_id: ", rp_id);
@@ -92,6 +98,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   // @dev - Variables for the connected wallet address
   let connection = getConnection(wagmiConfig);
   let callerAddress = connection.address;
+  let chainId = connection.chainId;
   //const [connection, setConnection] = useState(null);
   //const [callerAddress, setCallerAddres] = useState(null);
 
@@ -116,8 +123,10 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
       // @dev - Retrieve a connected wallet address
       connection = getConnection(wagmiConfig);
       callerAddress = connection.address;
+      chainId = connection.chainId;
       console.log("connection: ", connection);
       console.log("callerAddress: ", callerAddress);
+      console.log("chainId: ", chainId);
     };
 
     fetchRp();
@@ -216,7 +225,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
       const proof = response.proof;
 
       // @dev - Invoke the storeVerifiedWorldIDV3ProofData() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
-      await storeVerifiedWorldIDV3ProofData(
+      const tx = await storeVerifiedWorldIDV3ProofData(
         app_id,
         action_id,
         rp_id,
@@ -229,6 +238,19 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
         environment,
         protocolVersion
       );
+
+      const hash = tx?.hash || tx; // fallback if function returns hash directly
+      setTxHash(hash);
+
+      let baseUrl;
+      if (chainId === WORLD_CHAIN_SEPOLIA_CHAIN_ID) {
+        baseUrl = worldScanSepolia;
+      } else if (chainId === WORLD_CHAIN_MAINNET_CHAIN_ID) {
+        baseUrl = worldScanMainnet;
+      }
+
+      const txUrl = `${baseUrl}/tx/${hash}`;
+      setTxUrl(txUrl);
 
       // @dev - hasWorldIDV3Badge() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
       const _hasWorldIDV3Badge = await hasWorldIDV3Badge(callerAddress);
@@ -349,8 +371,38 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               <details className="verification-details">
                 <summary>View Verification Details</summary>
                 <pre>
+                  <strong>Verified World ID v3 Proof data:</strong>
                   {JSON.stringify(verificationResult, null, 2)}
                 </pre>
+
+                <br></br>
+
+                <div className="tx-container">
+                  <strong className="tx-title">Transaction Data:</strong>
+
+                  {txHash && txUrl ? (
+                    <div className="tx-content">
+                      <div className="tx-description">
+                        The verified World ID v3 Proof data has been successfully stored into the WorldIDV3BadgeManagerForOffChainVerifiedProof contract
+                      </div>
+
+                      <div className="tx-hash">
+                        Transaction Hash: {txHash}
+                        <br></br>
+                        <a
+                          href={txUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="tx-link"
+                        >
+                          🔗 View on WorldScan
+                        </a>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="tx-empty">No transaction data</p>
+                  )}
+                </div>
               </details>
             )}
 

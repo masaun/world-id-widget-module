@@ -88,3 +88,55 @@
 .reset-button:hover {
   background-color: #4b5563;
 }
+
+/* =========================
+   Transaction Section
+========================= */
+
+.tx-container {
+  margin-bottom: 12px;
+}
+
+.tx-title {
+  font-weight: 600;
+}
+
+/* Wrapper */
+.tx-content {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Description text */
+.tx-description {
+  font-size: 12px;
+  color: #374151; /* subtle gray */
+}
+
+/* Hash text */
+.tx-hash {
+  font-size: 12px;
+  color: #111827;
+  word-break: break-all; /* handles long hashes */
+}
+
+/* Link */
+.tx-link {
+  font-size: 12px;
+  color: #4da6ff;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.tx-link:hover {
+  text-decoration: underline;
+}
+
+/* Empty state */
+.tx-empty {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
