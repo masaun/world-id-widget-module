@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 //import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
 import {
   IDKitRequestWidget,
@@ -9,9 +9,6 @@ import {
 
 // // @dev - Hashing module for a signal
 // import { hashSignal } from "@worldcoin/idkit-core/hashing";
-
-// @dev - Import the "@wagmi/core"
-//import { useAccount } from 'wagmi';
 
 // @dev - Library to decode ABI parameters, which is imported from the 'viem' library
 // import { decodeAbiParameters, parseAbiParameters } from 'viem';
@@ -30,8 +27,16 @@ import {
 //   WORLD_ID_V3_BADGE_MANAGER_ADDRESS
 // } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManager'
 
-// // @dev - TEMPORARY: Wagmi
-// import { writeContract, readContract } from '@wagmi/core';
+// @dev - Functions in the WorldIDV3BadgeManager.sol
+import {
+  storeVerifiedWorldIDV3ProofData,
+  getVerifiedWorldIDV3ProofData,
+  hasWorldIDV3Badge,
+  WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS
+} from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManagerForOffChainVerifiedProof'
+
+// // @dev - TEMPORARY: ABI of the WorldIDV3BadgeManager.sol
+// import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
 
 // // @dev - TEMPORARY: We should replace this depends on project
 // import { 
@@ -40,9 +45,15 @@ import {
 //   WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
 // } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/config';
 
-// // @dev - TEMPORARY: ABI of the WorldIDV3BadgeManager.sol
-// import { WORLD_ID_V3_BADGE_MANAGER_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManager';
+// @dev - AppKit based wagmiConfig
+import { wagmiAdapter, projectId, networks } from '@/config'
+export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
+// @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
+import { getConnection } from '@wagmi/core';
+
+// @dev - CSS
+import '@/lib/world-id-badge-manager/styles/spinner.css';
 
 interface WorldIdProps {
   onSuccess?: (result: ISuccessResult) => void;
@@ -50,33 +61,15 @@ interface WorldIdProps {
 }
 
 /**
- * @title - Generate the connect URL and collect proof
- * @dev - This API request for backend will be sent to the /app/api/rp-signature/route.ts through Next.js App Router 
- * @dev - Doc: https://docs.world.org/world-id/idkit/integrate#step-4-generate-the-connect-url-and-collect-proof
- */
-// const rpSig = await fetch("/api/rp-signature", {
-//   method: "POST",
-//   headers: { "content-type": "application/json" },
-//   body: JSON.stringify({ action: "my-action" }),
-// }).then((r) => r.json());
-
-// const rp_context: RpContext = {
-//   rp_id: process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID, // Your app's `rp_id` from the Developer Portal
-//   nonce: rpSig.nonce,
-//   created_at: rpSig.created_at,
-//   expires_at: rpSig.expires_at,
-//   signature: rpSig.sig,
-// };
-
-
-/**
- * @title - The WorldIdVerification function
+ * @title - The WorldId Verification function
+ * @dev - At this point, the World ID v3 Proof can be verified here with the World ID v4 SDK. 
+ * @dev - The World ID v3 Proof verification is done off-chain using the World ID v4 SDK. 
  */
 export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
-  // @dev - Retrieve a connected wallet address
-  //const { address } = useAccount();
-  //const connectedAddress = address;
+  // @dev - Variable for spinner icon-running
+  const [isLoading, setIsLoading] = useState(false);
 
+  // @dev - Variables for the World ID Proof verification
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ISuccessResult | null>(null);
 
@@ -88,33 +81,27 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your app_id
   const action_id = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
   const rp_id = process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID || "WORLDCOIN_RP_ID is not set";;   // Replace with your rp_id
-  const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
+  //const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
   console.log("app_id: ", app_id);
   console.log("action_id: ", action_id);
   console.log("rp_id: ", rp_id);
 
-  // const rpSig = await fetch("/api/rp-signature", {
-  //   method: "POST",
-  //   headers: { "content-type": "application/json" },
-  //   body: JSON.stringify({ action: "my-action" }),
-  // }).then((r) => r.json());
-
-  // const rp_context: RpContext = {
-  //   rp_id: rp_id, // Your app's `rp_id` from the Developer Portal
-  //   nonce: rpSig.nonce,
-  //   created_at: rpSig.created_at,
-  //   expires_at: rpSig.expires_at,
-  //   signature: rpSig.sig,
-  // };
+  // @dev - Variables for the connected wallet address
+  let connection = getConnection(wagmiConfig);
+  let callerAddress = connection.address;
+  //const [connection, setConnection] = useState(null);
+  //const [callerAddress, setCallerAddres] = useState(null);
 
   useEffect(() => {
     const fetchRp = async () => {
+      // @dev - Call a RP signature from backend (Directory: app/api/rp-signature/route.ts)
       const rpSig = await fetch("/api/rp-signature", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ action: action_id }),
       }).then((r) => r.json());
 
+      // @dev - Store a RP signature
       setRpContext({
         rp_id: rp_id!,
         nonce: rpSig.nonce,
@@ -122,6 +109,12 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
         expires_at: rpSig.expires_at,
         signature: rpSig.sig,
       });
+
+      // @dev - Retrieve a connected wallet address
+      connection = getConnection(wagmiConfig);
+      callerAddress = connection.address;
+      console.log("connection: ", connection);
+      console.log("callerAddress: ", callerAddress);
     };
 
     fetchRp();
@@ -168,6 +161,96 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   //   console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
   // };
 
+  const handleVerify= async (result) => {
+    // @dev - Debugging
+    console.log("result: ", result);
+    console.log("merkle_root: ", result.responses[0].merkle_root);
+    console.log("signal_hash: ", result.responses[0].signal_hash);
+    console.log("nullifier: ", result.responses[0].nullifier);
+    console.log("proof: ", result.responses[0].proof);
+
+    // --------------------------------------------------------------------------- //
+    //      "Off-chain" verification code for World ID v3 & v4 Uniquness Proof     //
+    // --------------------------------------------------------------------------- //
+    // @dev - "Off-chain" verification code for World ID v3 & v4 Uniquness Proof  
+    const response = await fetch("/api/verify-proof", { // [Result]: Successful
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        //app_id: app_id,
+        rp_id: rpContext.rp_id,
+        idkitResponse: result,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Backend verification failed");
+    }
+  }
+
+  // @dev - The following "hasHandledSuccess" implementation is to avoid that the same on-chain function is unintentionally called twice.
+  const hasHandledSuccess = useRef(false);
+  
+  // @dev - Invoke the storeVerifiedWorldIDV3ProofData() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
+  const handleSuccess = async (result: any) => {
+    setIsLoading(true); // 🔥 START spinner
+
+    // @dev - Using the "hasHandledSuccess" to avoid that the same on-chain function is unintentionally called twice.
+    if (hasHandledSuccess.current) return;
+    hasHandledSuccess.current = true;
+
+    try {
+      const nonce = result.nonce;
+      const environment = result.environment;
+      const protocolVersion = result.protocol_version;
+
+      const response = result.responses[0];
+
+      const identifier = response.identifier;
+      const merkleRoot = response.merkle_root;
+      const signalHash = response.signal_hash;
+      const nullifier = response.nullifier;
+      const proof = response.proof;
+
+      // @dev - Invoke the storeVerifiedWorldIDV3ProofData() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
+      await storeVerifiedWorldIDV3ProofData(
+        app_id,
+        action_id,
+        rp_id,
+        nonce,
+        identifier,
+        merkleRoot,
+        nullifier,
+        proof,
+        signalHash,
+        environment,
+        protocolVersion
+      );
+
+      // @dev - hasWorldIDV3Badge() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
+      const _hasWorldIDV3Badge = await hasWorldIDV3Badge(callerAddress);
+      console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
+
+      setIsVerified(true);
+      setVerificationResult(result);
+
+    } catch (err) {
+      console.error("🔥 ERROR inside handleSuccess:", err);
+    } finally {
+      setIsLoading(false); // 🔥 STOP spinner (always)
+    }
+  };
+
+  // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
+  const handleHasWorldIDV3Badge = async () => {
+    try {
+      const _hasWorldIDV3Badge = await hasWorldIDV3Badge(callerAddress);
+      console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
+    } catch (err) {
+      console.error("🔥 ERROR inside handleHasWorldIDV3Badge:", err);
+    }
+  }
+
   // @dev - The process if a World ID verification is failed.
   const handleError = (error: Error) => {
     console.error("World ID verification failed:", error);
@@ -178,219 +261,142 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
   return (
     <div className="world-id-container">
-      {!isVerified ? (
-        <>
-          {/* ✅ Your button */}
-          <button
-            onClick={() => setOpen(true)}
-            className="world-id-button"
-            style={{
-              backgroundColor: '#000000',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '12px 24px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              marginTop: '10px'
-            }}
-          >
-            🌍 Verify with World ID
-          </button>
+      {callerAddress && (
+        !isVerified ? (
+          <>
+            {/* ✅ Your button */}
+            <button
+              onClick={() => setOpen(true)}
+              disabled={!rpContext}
+              className="world-id-button"
+              style={{
+                backgroundColor: rpContext ? '#000000' : '#9ca3af', // black => gray
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                marginTop: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              {isLoading ? (
+                <>
+                  <span className="spinner" />
+                  Verifying...
+                </>
+              ) : (
+                <>🌍 Verify with World ID</>
+              )}
+            </button>
 
-          {/* ✅ The widget (modal only) */}
-          <IDKitRequestWidget
-            open={open}
-            onOpenChange={setOpen}
-            app_id={app_id} // Your app's `app_id` from the Developer Portal
-            // Action: Context that scopes what the user is proving uniqueness for
-            // e.g., "verify-account-2026" or "claim-airdrop-2026".
-            action={action_id}
-            rp_context={rpContext}
-            allow_legacy_proofs={true}
-            // Signal (optional): Bind specific context into the requested proof.
-            // Examples: user ID, wallet address. Your backend should enforce the same value.
-            preset={orbLegacy({ signal: userWalletAddress })}
-            //preset={orbLegacy({ signal: userWalletAddress })}
+            {/* ✅ The widget (modal only) */}
+            <IDKitRequestWidget
+              open={open}
+              onOpenChange={setOpen}
+              app_id={app_id} // Your app's `app_id` from the Developer Portal
+              // Action: Context that scopes what the user is proving uniqueness for
+              // e.g., "verify-account-2026" or "claim-airdrop-2026".
+              action={action_id}
+              rp_context={rpContext}
+              allow_legacy_proofs={true}
+              // Signal (optional): Bind specific context into the requested proof.
+              // Examples: user ID, wallet address. Your backend should enforce the same value.
+              preset={orbLegacy({ signal: callerAddress })}
+              //preset={orbLegacy({ signal: userWalletAddress })}
 
-            handleVerify={async (result) => {
-              // @dev - Debugging
-              console.log("result: ", result);
-              console.log("merkle_root: ", result.responses[0].merkle_root);
-              console.log("signal_hash: ", result.responses[0].signal_hash);
-              console.log("nullifier: ", result.responses[0].nullifier);
-              console.log("proof: ", result.responses[0].proof);
+              handleVerify={handleVerify}
 
-              // --------------------------------------------------------------------------- //
-              //      "Off-chain" verification code for World ID v3 & v4 Uniquness Proof     //
-              // --------------------------------------------------------------------------- //
-              // @dev - "Off-chain" verification code for World ID v3 & v4 Uniquness Proof  
-              const response = await fetch("/api/verify-proof", { // [Result]: Successful
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({
-                  //app_id: app_id,
-                  rp_id: rpContext.rp_id,
-                  idkitResponse: result,
-                }),
-              });
+              onSuccess={handleSuccess}
 
-              if (!response.ok) {
-                throw new Error("Backend verification failed");
-              }
+              onError={handleError}
+            />
+          </>
 
-              // -------------------------------------------------------- //
-              //      "On-chain" verification for World ID "v3" Proof     //
-              // -------------------------------------------------------- //
-              // try {
-              //   const response = result.responses[0];
-              //   console.log("response:", response);
-              //
-              //   const root = response.merkle_root;
-              //   console.log("root:", root);
-              //
-              //   const signalHash = response.signal_hash;
-              //   console.log("signalHash:", signalHash);
-              //
-              //   // ✅ recompute signal hash
-              //   //const signalHash = BigInt(hashSignal(userWalletAddress));
-              //   //console.log("signalHash:", signalHash);
-              //
-              //   const nullifierHash = response.nullifier;
-              //   console.log("nullifierHash:", nullifierHash);
-              //
-              //   const proof = response.proof;
-              //   console.log("proof:", proof);
-              //
-              //   //const externalNullifierHash: bigint = 0; 
-              //   const unpackedProof = decodeAbiParameters(
-              //     parseAbiParameters('uint256[8]'),
-              //     proof as `0x${string}`
-              //   )[0];
-              //
-              //   // @dev - Debugging
-              //   console.log("root: ", root);
-              //   console.log("signalHash: ", signalHash);
-              //   console.log("nullifierHash: ", nullifierHash);
-              //   console.log("proof: ", proof);
-              //   console.log("unpackedProof: ", unpackedProof);
-              //
-              //   // @dev - Invoke the verifyWorldIDV3Proof() in the WorldIDV3BadgeManager.sol 
-              //   await verifyWorldIDV3Proof(
-              //     app_id,
-              //     action_id,
-              //     BigInt(root),
-              //     BigInt(signalHash),
-              //     BigInt(nullifierHash),
-              //     //externalNullifierHash,
-              //     unpackedProof
-              //   );
-              //
-              //   // @dev - Invoke the verifyWorldIDV3ProofAndStoreIntoOnChainStorage() in the WorldIDV3BadgeManager.sol 
-              //   const txResult = await verifyWorldIDV3ProofAndStoreIntoOnChainStorage(
-              //     app_id,
-              //     action_id,
-              //     root,
-              //     signalHash,
-              //     nullifierHash,
-              //     //externalNullifierHash,
-              //     unpackedProof
-              //   );
-              //
-              //   // @dev - Invoke the hasWorldIDV3Badge() in the WorldIDV3BadgeManager.sol 
-              //   const _hasWorldIDV3Badge = await hasWorldIDV3Badge(userWalletAddress);
-              //   //const hasWorldIDV3Badge = useHasWorldIDV3Badge();
-              //   console.log("_hasWorldIDV3Badge:", _hasWorldIDV3Badge);
-              // } catch (err) {
-              //   console.error("🔥 ERROR inside handleVerify:", err);
-              // }
-            }}
-
-            onSuccess={(result) => {
-              // Runs after `handleVerify` succeeds. Update app state/UI here.
-            }}
-          />
-        </>
-
-        // <IDKitWidget
-        //   app_id={app_id}
-        //   action={action_id}
-        //   verification_level={VerificationLevel.SecureDocument}
-        //   onSuccess={handleVerify}
-        //   onError={handleError}
-        //   credential_types={["secure document"]}
-        //   //credential_types={["orb", "phone"]}
-        //   enableTelemetry
-        // >
-        //   {({ open }: { open: () => void }) => (
-        //     <button 
-        //       onClick={open}
-        //       className="world-id-button"
-        //       style={{
-        //         backgroundColor: '#000000',
-        //         color: 'white',
-        //         border: 'none',
-        //         borderRadius: '8px',
-        //         padding: '12px 24px',
-        //         fontSize: '16px',
-        //         fontWeight: '600',
-        //         cursor: 'pointer',
-        //         transition: 'all 0.2s ease',
-        //         marginTop: '10px'
-        //       }}
-        //     >
-        //       🌍 Verify with World ID
-        //     </button>
-        //   )}
-        // </IDKitWidget>
-      ) : (
-        <div className="verification-success" style={{ 
-          padding: '16px', 
-          backgroundColor: '#f0f9ff', 
-          border: '1px solid #0ea5e9', 
-          borderRadius: '8px',
-          marginTop: '10px'
-        }}>
-          <p style={{ margin: 0, color: '#0c4a6e', fontWeight: '600' }}>
-            ✅ World ID Verified Successfully!
-          </p>
-          {verificationResult && (
-            <details style={{ marginTop: '8px' }}>
-              <summary style={{ cursor: 'pointer', color: '#0369a1' }}>
-                View Verification Details
-              </summary>
-              <pre style={{ 
-                fontSize: '12px', 
-                backgroundColor: '#e0f2fe', 
-                padding: '8px', 
-                borderRadius: '4px',
-                overflow: 'auto',
+          // <IDKitWidget
+          //   app_id={app_id}
+          //   action={action_id}
+          //   verification_level={VerificationLevel.SecureDocument}
+          //   onSuccess={handleVerify}
+          //   onError={handleError}
+          //   credential_types={["secure document"]}
+          //   //credential_types={["orb", "phone"]}
+          //   enableTelemetry
+          // >
+          //   {({ open }: { open: () => void }) => (
+          //     <button 
+          //       onClick={open}
+          //       className="world-id-button"
+          //       style={{
+          //         backgroundColor: '#000000',
+          //         color: 'white',
+          //         border: 'none',
+          //         borderRadius: '8px',
+          //         padding: '12px 24px',
+          //         fontSize: '16px',
+          //         fontWeight: '600',
+          //         cursor: 'pointer',
+          //         transition: 'all 0.2s ease',
+          //         marginTop: '10px'
+          //       }}
+          //     >
+          //       🌍 Verify with World ID
+          //     </button>
+          //   )}
+          // </IDKitWidget>
+        ) : (
+          <div className="verification-success" style={{ 
+            padding: '16px', 
+            backgroundColor: '#f0f9ff', 
+            border: '1px solid #0ea5e9', 
+            borderRadius: '8px',
+            marginTop: '10px'
+          }}>
+            <p style={{ margin: 0, color: '#0c4a6e', fontWeight: '600' }}>
+              ✅ Successful to verify your World ID v3 Proof!!
+            </p>
+            {verificationResult && (
+              <details style={{ marginTop: '8px' }}>
+                <summary style={{ cursor: 'pointer', color: '#0369a1' }}>
+                  View Verification Details
+                </summary>
+                <pre style={{ 
+                  fontSize: '12px', 
+                  backgroundColor: '#e0f2fe', 
+                  padding: '8px', 
+                  borderRadius: '4px',
+                  overflow: 'auto',
+                  marginTop: '8px'
+                }}>
+                  {JSON.stringify(verificationResult, null, 2)}
+                </pre>
+              </details>
+            )}
+            <button 
+              onClick={() => {
+                setIsVerified(false);
+                setVerificationResult(null);
+              }}
+              style={{
+                backgroundColor: '#6b7280',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                cursor: 'pointer',
                 marginTop: '8px'
-              }}>
-                {JSON.stringify(verificationResult, null, 2)}
-              </pre>
-            </details>
-          )}
-          <button 
-            onClick={() => {
-              setIsVerified(false);
-              setVerificationResult(null);
-            }}
-            style={{
-              backgroundColor: '#6b7280',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '8px 16px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              marginTop: '8px'
-            }}
-          >
-            Reset Verification
-          </button>
-        </div>
+              }}
+            >
+              Reset Verification
+            </button>
+          </div>
+        )
       )}
     </div>
   );
