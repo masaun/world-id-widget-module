@@ -52,6 +52,9 @@ export const wagmiConfig = wagmiAdapter.wagmiConfig;
 // @dev - Get a caller address (Source: https://wagmi.sh/core/api/actions/getConnection)
 import { getConnection } from '@wagmi/core';
 
+// @dev - CSS
+import '@/lib/world-id-badge-manager/styles/spinner.css';
+
 interface WorldIdProps {
   onSuccess?: (result: ISuccessResult) => void;
   onError?: (error: Error) => void;
@@ -63,6 +66,10 @@ interface WorldIdProps {
  * @dev - The World ID v3 Proof verification is done off-chain using the World ID v4 SDK. 
  */
 export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
+  // @dev - Variable for spinner icon-running
+  const [isLoading, setIsLoading] = useState(false);
+
+  // @dev - Variables for the World ID Proof verification
   const [isVerified, setIsVerified] = useState(false);
   const [verificationResult, setVerificationResult] = useState<ISuccessResult | null>(null);
 
@@ -186,6 +193,8 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   
   // @dev - Invoke the storeVerifiedWorldIDV3ProofData() in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
   const handleSuccess = async (result: any) => {
+    setIsLoading(true); // 🔥 START spinner
+
     // @dev - Using the "hasHandledSuccess" to avoid that the same on-chain function is unintentionally called twice.
     if (hasHandledSuccess.current) return;
     hasHandledSuccess.current = true;
@@ -227,6 +236,8 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
     } catch (err) {
       console.error("🔥 ERROR inside handleSuccess:", err);
+    } finally {
+      setIsLoading(false); // 🔥 STOP spinner (always)
     }
   };
 
@@ -260,18 +271,28 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               className="world-id-button"
               style={{
                 backgroundColor: rpContext ? '#000000' : '#9ca3af', // black => gray
-                //backgroundColor: '#000000',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
                 padding: '12px 24px',
                 fontSize: '16px',
                 fontWeight: '600',
-                cursor: 'pointer',
-                marginTop: '10px'
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                marginTop: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
               }}
             >
-              🌍 Verify with World ID
+              {isLoading ? (
+                <>
+                  <span className="spinner" />
+                  Verifying...
+                </>
+              ) : (
+                <>🌍 Verify with World ID</>
+              )}
             </button>
 
             {/* ✅ The widget (modal only) */}
