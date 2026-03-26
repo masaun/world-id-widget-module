@@ -1,11 +1,13 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-//import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
+
+// @dev - ID Kit SDK (@worldcoin/idkit) powered by World ID
 import {
   IDKitRequestWidget,
   orbLegacy,
   type RpContext
 } from '@worldcoin/idkit';
+//import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
 
 // // @dev - Hashing module for a signal
 // import { hashSignal } from "@worldcoin/idkit-core/hashing";
@@ -27,7 +29,7 @@ import {
 //   WORLD_ID_V3_BADGE_MANAGER_ADDRESS
 // } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManager'
 
-// @dev - Functions in the WorldIDV3BadgeManager.sol
+// @dev - Functions in the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
 import {
   storeVerifiedWorldIDV3ProofData,
   getVerifiedWorldIDV3ProofData,
@@ -53,6 +55,7 @@ export const wagmiConfig = wagmiAdapter.wagmiConfig;
 import { getConnection } from '@wagmi/core';
 
 // @dev - CSS
+import '@/lib/world-id-badge-manager/styles/world-id.css';
 import '@/lib/world-id-badge-manager/styles/spinner.css';
 
 interface WorldIdProps {
@@ -264,26 +267,13 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
       {callerAddress && (
         !isVerified ? (
           <>
-            {/* ✅ Your button */}
+            {/* Button for the World ID v3 Proof verification */}
             <button
               onClick={() => setOpen(true)}
-              disabled={!rpContext}
-              className="world-id-button"
-              style={{
-                backgroundColor: rpContext ? '#000000' : '#9ca3af', // black => gray
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '12px 24px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                marginTop: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
+              disabled={!rpContext || isLoading}
+              className={`world-id-button 
+                ${!rpContext ? 'disabled' : ''} 
+                ${isLoading ? 'loading' : ''}`}
             >
               {isLoading ? (
                 <>
@@ -295,7 +285,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               )}
             </button>
 
-            {/* ✅ The widget (modal only) */}
+            {/* World ID widget (modal) */}
             <IDKitRequestWidget
               open={open}
               onOpenChange={setOpen}
@@ -345,52 +335,30 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
           //         marginTop: '10px'
           //       }}
           //     >
-          //       🌍 Verify with World ID
+          //       🌍 Verify with World
           //     </button>
           //   )}
           // </IDKitWidget>
         ) : (
-          <div className="verification-success" style={{ 
-            padding: '16px', 
-            backgroundColor: '#f0f9ff', 
-            border: '1px solid #0ea5e9', 
-            borderRadius: '8px',
-            marginTop: '10px'
-          }}>
-            <p style={{ margin: 0, color: '#0c4a6e', fontWeight: '600' }}>
+          <div className="verification-success">
+            <p className="verification-text">
               ✅ Successful to verify your World ID v3 Proof!!
             </p>
+
             {verificationResult && (
-              <details style={{ marginTop: '8px' }}>
-                <summary style={{ cursor: 'pointer', color: '#0369a1' }}>
-                  View Verification Details
-                </summary>
-                <pre style={{ 
-                  fontSize: '12px', 
-                  backgroundColor: '#e0f2fe', 
-                  padding: '8px', 
-                  borderRadius: '4px',
-                  overflow: 'auto',
-                  marginTop: '8px'
-                }}>
+              <details className="verification-details">
+                <summary>View Verification Details</summary>
+                <pre>
                   {JSON.stringify(verificationResult, null, 2)}
                 </pre>
               </details>
             )}
-            <button 
+
+            <button
+              className="reset-button"
               onClick={() => {
                 setIsVerified(false);
                 setVerificationResult(null);
-              }}
-              style={{
-                backgroundColor: '#6b7280',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '8px 16px',
-                fontSize: '14px',
-                cursor: 'pointer',
-                marginTop: '8px'
               }}
             >
               Reset Verification
