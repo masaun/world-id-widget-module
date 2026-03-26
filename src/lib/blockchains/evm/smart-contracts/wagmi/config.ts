@@ -2,6 +2,7 @@ import { createConfig, http, fallback } from '@wagmi/core'
 import { base, celo, baseSepolia } from '@wagmi/core/chains'
 import type { Chain } from 'wagmi/chains'
 
+// @dev - Import from Wagmi related modules from the Reown AppKit
 import { wagmiAdapter, projectId, networks } from '@/config'
 
 // @dev - Chain ID for World Chain
