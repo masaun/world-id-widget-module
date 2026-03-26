@@ -1,0 +1,90 @@
+/* Container */
+.world-id-container {
+  margin-top: 10px;
+}
+
+/* =========================
+   Button
+========================= */
+.world-id-button {
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Disabled (rpContext null) */
+.world-id-button.disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Loading state */
+.world-id-button.loading {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* =========================
+   Success Box
+========================= */
+.verification-success {
+  padding: 16px;
+  background-color: #f0f9ff;
+  border: 1px solid #0ea5e9;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.verification-text {
+  margin: 0;
+  color: #0c4a6e;
+  font-weight: 600;
+}
+
+.verification-details {
+  margin-top: 8px;
+}
+
+.verification-details summary {
+  cursor: pointer;
+  color: #0369a1;
+}
+
+.verification-details pre {
+  font-size: 12px;
+  background-color: #e0f2fe;
+  padding: 8px;
+  border-radius: 4px;
+  overflow: auto;
+  margin-top: 8px;
+}
+
+/* =========================
+   Reset Button
+========================= */
+.reset-button {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.reset-button:hover {
+  background-color: #4b5563;
+}
