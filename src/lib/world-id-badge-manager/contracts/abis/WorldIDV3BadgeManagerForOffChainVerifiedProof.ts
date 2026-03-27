@@ -8,6 +8,6 @@ import artifactOfWorldIDV3BadgeManagerForOffChainVerifiedProof from '../artifact
  * @notice Contract ABIs of the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
  * This file contains all the contract ABIs used across the project
  */
-//export const WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ABI = artifactOfWorldIDV3BadgeManagerForOffChainVerifiedProof.abi as const;
-export const WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ABI = artifactOfWorldIDV3BadgeManagerForOffChainVerifiedProof.abi as Abi
+//export const WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIN_VERIFIED_PROOF_ABI = artifactOfWorldIDV3BadgeManagerForOffChainVerifiedProof.abi as const;
+export const WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIN_VERIFIED_PROOF_ABI = artifactOfWorldIDV3BadgeManagerForOffChainVerifiedProof.abi as Abi
 

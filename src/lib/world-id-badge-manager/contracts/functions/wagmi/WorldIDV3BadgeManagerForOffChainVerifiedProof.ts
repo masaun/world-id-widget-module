@@ -6,7 +6,7 @@ import { getConnection, writeContract, readContract } from '@wagmi/core';
 import type { Abi, Address } from 'viem';
 
 // @dev - ABI of the WorldIDV3BadgeManagerForOffChainVerifiedProof.sol
-import { WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManagerForOffChainVerifiedProof';
+import { WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIN_VERIFIED_PROOF_ABI } from '@/lib/world-id-badge-manager/contracts/abis/WorldIDV3BadgeManagerForOffChainVerifiedProof';
 
 // @dev - TODO: We should replace this depends on project
 import { 
@@ -14,7 +14,6 @@ import {
   //base, baseSepolia, worldchain, worldchainSepolia,
   WORLD_CHAIN_MAINNET_CHAIN_ID, WORLD_CHAIN_SEPOLIA_CHAIN_ID
 } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
-//import { wagmiConfig } from '@/lib/blockchains/evm/smart-contracts/wagmi/config';
 
 // @dev - AppKit based wagmiConfig
 import { wagmiAdapter, projectId, networks } from '@/config/wagmi'
@@ -42,12 +41,12 @@ export function getWalletConnection() {
 export function getContractAddress(chainId: number): `0x${string}` {
   if (chainId === WORLD_CHAIN_MAINNET_CHAIN_ID) {
     return process.env
-      .NEXT_PUBLIC_WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ON_WORLD_CHAIN_MAINNET as `0x${string}`;
+      .NEXT_PUBLIC_WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIN_VERIFIED_PROOF_ON_WORLD_CHAIN_MAINNET as `0x${string}`;
   }
 
   if (chainId === WORLD_CHAIN_SEPOLIA_CHAIN_ID) {
     return process.env
-      .NEXT_PUBLIC_WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
+      .NEXT_PUBLIC_WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIN_VERIFIED_PROOF_ON_WORLD_CHAIN_SEPOLIA as `0x${string}`;
   }
 
   throw new Error(`Unsupported chainId: ${chainId}`);
@@ -67,7 +66,7 @@ export async function storeVerifiedWorldIDV3ProofData(
   nullifier: BigInt,
   proof: string,
   signalHash: BigInt,
-  environment: string,      // "production"
+  environment: string,     // "production"
   protocolVersion: string  // "3.0"
 ): Promise<any> {
   const { callerAddress, chainId } = getWalletConnection();
@@ -76,7 +75,7 @@ export async function storeVerifiedWorldIDV3ProofData(
   try {
     const txResult = await writeContract(wagmiConfig, {
       address: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS, // on World Chain mainnet or sepolia
-      abi: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ABI,
+      abi: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIN_VERIFIED_PROOF_ABI,
       functionName: 'storeVerifiedWorldIDV3ProofData',
       args: [
         appId,
@@ -116,7 +115,7 @@ export async function hasWorldIDV3Badge(
   try {
     const result = await readContract(wagmiConfig, {
       address: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS, // on World Chain mainnet or sepolia
-      abi: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ABI,
+      abi: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIN_VERIFIED_PROOF_ABI,
       functionName: 'hasWorldIDV3Badge',
       args: [walletAddress],
       chainId: chainId,   // World Chain mainnet or sepolia
@@ -144,7 +143,7 @@ export async function getVerifiedWorldIDV3ProofData(
   try {
     verifiedWorldIDV3ProofData = await readContract(wagmiConfig, {
       address: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS, // on World Chain mainnet or sepolia
-      abi: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ABI,
+      abi: WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIN_VERIFIED_PROOF_ABI,
       functionName: 'getVerifiedWorldIDV3ProofData',
       args: [walletAddress],
       chainId: chainId,   // World Chain mainnet or sepolia
