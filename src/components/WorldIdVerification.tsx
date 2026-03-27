@@ -33,8 +33,7 @@ import {
 import {
   storeVerifiedWorldIDV3ProofData,
   getVerifiedWorldIDV3ProofData,
-  hasWorldIDV3Badge,
-  WORLD_ID_V3_BADGE_MANAGER_FOR_OFFCHAIIN_VERIFIED_PROOF_ADDRESS
+  hasWorldIDV3Badge
 } from '@/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManagerForOffChainVerifiedProof'
 
 // // @dev - TEMPORARY: ABI of the WorldIDV3BadgeManager.sol
