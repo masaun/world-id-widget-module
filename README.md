@@ -1,6 +1,8 @@
 # World ID Widget Module 🆔
 
-A modern, secure decentralized identity verification application built with Next.js, React, and TypeScript. World ID Widget Module integrates Worldcoin's World ID protocol with Reown (formerly WalletConnect) to provide seamless wallet connections and privacy-preserving human verification for decentralized applications (dApps).
+A modern, secure decentralized identity verification application built with Next.js, React, and TypeScript. 
+
+World ID Widget Module integrates Worldcoin's World ID protocol with Reown's AppKit (formerly WalletConnect) to provide seamless wallet connections and privacy-preserving human verification for decentralized applications (dApps).
 
 ## Overview
 
@@ -25,7 +27,7 @@ This application serves as a reference implementation for developers looking to 
 - **Identity**: World ID (@worldcoin/idkit) for human verification
 - **Wallet Integration**: Reown AppKit with Wagmi adapter for multi-wallet support
 - **State Management**: React Query (@tanstack/react-query) for server state management
-- **Blockchain Interaction**: Viem for Ethereum interactions
+- **Blockchain Interaction**: `@wagmi/core (v2)` `Viem` for Ethereum interactions
 - **Styling**: CSS modules with responsive design
 - **Development**: ESLint for code quality and TypeScript for type safety
 
@@ -47,9 +49,11 @@ This application serves as a reference implementation for developers looking to 
    cp .env.example .env
    ```
    
-   Update the following variables in `.env.local`:
-   - `NEXT_PUBLIC_WORLDCOIN_APP_ID`: Your World ID app ID from [Worldcoin Developer Portal](https://developer.worldcoin.org)
-   - `NEXT_PUBLIC_WORLDCOIN_ACTION`: Your verification action name
+   Update the following variables in `.env`:
+   - `NEXT_PUBLIC_WORLDCOIN_APP_ID`: Your World ID's `app ID` from [Worldcoin Developer Portal](https://developer.worldcoin.org)
+   - `NEXT_PUBLIC_WORLDCOIN_ACTION`: Your World ID's `action (ID)` name from [Worldcoin Developer Portal](https://developer.worldcoin.org)
+   - `NEXT_PUBLIC_WORLDCOIN_RP_ID`: Your World ID's `RP ID` from [Worldcoin Developer Portal](https://developer.worldcoin.org)
+   - `NEXT_PUBLIC_WORLDCOIN_RP_SIGNING_KEY`: Your World ID's `RP Signing key`, which is a `Private Key` that is downloaded from [Worldcoin Developer Portal](https://developer.worldcoin.org)
    - `NEXT_PUBLIC_PROJECT_ID`: Your Reown project ID from [Reown Dashboard](https://dashboard.reown.com)
 
 4. **Start the development server:**
@@ -63,11 +67,16 @@ This application serves as a reference implementation for developers looking to 
 
 ### World ID Verification
 1. Launch the application
-2. Click "🌍 Verify with World ID" to start the human verification process
-3. Complete verification using either:
-   - **Orb verification**: Visit a Worldcoin orb location
-   - **Phone verification**: Verify using your phone number
-4. View your verification status and details
+2. Click `"🌍 Verify with World ID"` button to start the human verification process
+3. QR code modal for a `World ID v3 Proof` verification (`iris` based verification using `orb` ) would be displayed:
+   (NOTE: In advance, Visit a Worldcoin orb location
+4. Once a user scan the QR code via their World App, the `World ID v3 Proof` generation and verification would get started.
+5. Once a `World ID v3 Proof` generation and verification would be completed, the proof data is stored into the `on-chain` storage via the `storeVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
+6. View your verification status and details
+7. You can check wether a user has a `World ID v3 Proof` in the form of `World ID v3 Proof` badge by invoking the `hasWorldIDV3Badge()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
+   
+   (Also, you can check a data of the verified `World ID v3 Proof` by invoking the `getVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`)
+
 
 ### Wallet Connection
 1. Click "Connect Wallet" to establish a wallet connection via Reown

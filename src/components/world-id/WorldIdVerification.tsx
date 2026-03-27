@@ -103,8 +103,8 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
   useEffect(() => {
     const fetchRp = async () => {
-      // @dev - Call a RP signature from backend (Directory: app/api/rp-signature/route.ts)
-      const rpSig = await fetch("/api/rp-signature", {
+      // @dev - Call a RP signature from backend (Directory: app/api/world-id/rp-signature/route.ts)
+      const rpSig = await fetch("/api/world-id/rp-signature", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ action: action_id }),
@@ -184,7 +184,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
     //      "Off-chain" verification code for World ID v3 & v4 Uniquness Proof     //
     // --------------------------------------------------------------------------- //
     // @dev - "Off-chain" verification code for World ID v3 & v4 Uniquness Proof  
-    const response = await fetch("/api/verify-proof", { // [Result]: Successful
+    const response = await fetch("/api/world-id/verify-proof", { // [Result]: Successful
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({

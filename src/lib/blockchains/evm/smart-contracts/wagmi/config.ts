@@ -71,13 +71,13 @@ const baseTransport = process.env.NEXT_PUBLIC_ALCHEMY_BASE_RPC_URL
 
 // @dev - Wagmi Config
 export const wagmiConfig = createConfig({
-  chains: [base, celo, worldChain, baseSepolia, celoSepolia, worldChainSepolia], // Support Base, Celo, Base Sepolia and Celo Sepolia
+  chains: [base, celo, worldChain, baseSepolia, celoSepolia, worldChainSepolia], // Support Base mainnet/sepolia, Celo mainnet/sepolia, Worldchain mainnet/sepolia
   transports: {
     [base.id]: baseTransport,
-    [celo.id]: http('https://forno.celo.org'),          // Celo mainnet RPC
-    [worldChain.id]: http(process.env.NEXT_PUBLIC_WORLD_CHAIN_MAINNET_RPC_URL), // World Chain Mainnet RPC
     [baseSepolia.id]: http('https://sepolia.base.org'), // Base Sepolia testnet RPC
+    [celo.id]: http('https://forno.celo.org'),          // Celo mainnet RPC
     [celoSepolia.id]: http(process.env.NEXT_PUBLIC_CELO_SEPOLIA_RPC_URL || 'https://forno.celo-sepolia.celo-testnet.org'), // Celo Sepolia testnet RPC (override via env)
+    [worldChain.id]: http(process.env.NEXT_PUBLIC_WORLD_CHAIN_MAINNET_RPC_URL),        // World Chain Mainnet RPC
     [worldChainSepolia.id]: http(process.env.NEXT_PUBLIC_WORLD_CHAIN_SEPOLIA_RPC_URL), // World Chain Sepolia RPC
   },
 })
