@@ -1,22 +1,23 @@
 # World ID Widget Module 🆔
 
-A modern, secure decentralized identity verification application built with Next.js, React, and TypeScript. 
-
-World ID Widget Module integrates Worldcoin's World ID protocol with Reown's AppKit (formerly WalletConnect) to provide seamless wallet connections and privacy-preserving human verification for decentralized applications (dApps).
-
 ## Overview
 
-World ID Widget Module demonstrates the integration of two powerful Web3 technologies:
+This is the World ID Widget Module to demonstrate the integration of two powerful Web3 technologies:
 - **World ID**: Worldcoin's privacy-preserving proof-of-personhood protocol
 - **Reown AppKit**: Advanced wallet connection infrastructure for seamless dApp interactions
 
 This application serves as a reference implementation for developers looking to build dApps that require both wallet connectivity and human verification, enabling use cases like sybil-resistant voting, fair airdrops, and authenticated user experiences.
 
+NOTE:
+- In this repo, the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`, which is deployed on World Chain mainnet / sepolia, would be used.
+  - The deployed addresses of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol` can be seen [here](https://github.com/masaun/world-id-badge-manager?tab=readme-ov-file#deployed-contract-addresses-on-world-chain-mainnet--sepolia).
+
+
 ## Features
 
 - **World ID Integration**: Privacy-preserving human verification using Worldcoin's orb and phone verification methods
 - **Secure Wallet Connections**: Connect to popular crypto wallets using Reown's advanced protocol  
-- **Multi-Chain Support**: Support for Ethereum, Polygon, and other EVM-compatible networks through Wagmi
+- **Multi-Chain Support**: Support for Ethereum, World Chain, Base, and other EVM-compatible networks through Wagmi
 - **User-Friendly Interface**: Clean, intuitive UI for managing both identity verification and wallet connections
 - **Real-Time Verification**: Instant World ID verification with detailed result display
 - **Cross-Platform Compatibility**: Works seamlessly on desktop and mobile devices
@@ -71,11 +72,16 @@ This application serves as a reference implementation for developers looking to 
 3. QR code modal for a `World ID v3 Proof` verification (`iris` based verification using `orb` ) would be displayed:
    (NOTE: In advance, Visit a Worldcoin orb location
 4. Once a user scan the QR code via their World App, the `World ID v3 Proof` generation and verification would get started.
-5. Once a `World ID v3 Proof` generation and verification would be completed, the proof data is stored into the `on-chain` storage via the `storeVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
+5. Once a `World ID v3 Proof` generation and verification would be completed `off-chain` (`backend`), the proof data is stored into the `on-chain` storage via the `storeVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
 6. View your verification status and details
 7. You can check wether a user has a `World ID v3 Proof` in the form of `World ID v3 Proof` badge by invoking the `hasWorldIDV3Badge()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
-   
-   (Also, you can check a data of the verified `World ID v3 Proof` by invoking the `getVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`)
+
+NOTE:
+- Also, you can check a data of the verified `World ID v3 Proof` by invoking the `getVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`)
+
+- Where the files, which is for `World ID v3 Proof` generation and verification would be completed `off-chain` (`backend`), is stored:
+   - `RP Signature` generation: `app/api/world-id/rp-signature/route.ts`
+   - `World ID v3 Proof` generation and verification: `app/api/world-id/verify-proof/route.ts`
 
 
 ### Wallet Connection
@@ -91,6 +97,10 @@ Once both World ID verification and wallet connection are complete, you can:
 - Participate in sybil-resistant activities
 
 ## Resources
+
+### `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol` Repo
+
+- The deployed addresses of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol` can be seen [here](https://github.com/masaun/world-id-badge-manager?tab=readme-ov-file#deployed-contract-addresses-on-world-chain-mainnet--sepolia).
 
 ### Documentation
 - [World ID Documentation](https://docs.world.org/world-id)
