@@ -67,11 +67,16 @@ This application serves as a reference implementation for developers looking to 
 
 ### World ID Verification
 1. Launch the application
-2. Click "🌍 Verify with World ID" to start the human verification process
-3. Complete verification using either:
-   - **Orb verification**: Visit a Worldcoin orb location
-   - **Phone verification**: Verify using your phone number
-4. View your verification status and details
+2. Click `"🌍 Verify with World ID"` button to start the human verification process
+3. QR code modal for a `World ID v3 Proof` verification (`iris` based verification using `orb` ) would be displayed:
+   (NOTE: In advance, Visit a Worldcoin orb location
+4. Once a user scan the QR code via their World App, the `World ID v3 Proof` generation and verification would get started.
+5. Once a `World ID v3 Proof` generation and verification would be completed, the proof data is stored into the `on-chain` storage via the `storeVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
+6. View your verification status and details
+7. You can check wether a user has a `World ID v3 Proof` in the form of `World ID v3 Proof` badge by invoking the `hasWorldIDV3Badge()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
+   
+   (Also, you can check a data of the verified `World ID v3 Proof` by invoking the `getVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`)
+
 
 ### Wallet Connection
 1. Click "Connect Wallet" to establish a wallet connection via Reown
