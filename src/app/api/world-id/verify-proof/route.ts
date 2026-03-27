@@ -1,8 +1,11 @@
-// app/api/verify-proof/route.ts
+// app/api/world-id/verify-proof/route.ts
 
 import { NextResponse } from "next/server";
 import type { IDKitResult } from "@worldcoin/idkit";
 
+/**
+ * @notice - Verify either a World ID v3 Proof or v4 Proof
+ */
 export async function POST(request: Request): Promise<Response> {
   const { 
     //app_id, 

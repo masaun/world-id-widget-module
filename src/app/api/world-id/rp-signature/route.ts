@@ -1,10 +1,13 @@
-// app/api/rp-signature/route.ts
+// app/api/world-id/rp-signature/route.ts
 
 import { NextResponse } from "next/server";
 import type { IDKitResult } from "@worldcoin/idkit";
 //import { signRequest } from "@worldcoin/idkit/signing";
 import { signRequest } from "@worldcoin/idkit-core/signing";
 
+/**
+ * @notice - Generate a RP signature for either World ID v3 or v4
+ */
 export async function POST(request: Request) {
   const { action } = await request.json();
 
