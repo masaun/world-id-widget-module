@@ -4,7 +4,7 @@ import { ConnectButton } from "@/components/ConnectButton";
 //import { InfoList } from "@/components/InfoList";
 //import { ActionButtonList } from "@/components/ActionButtonList";
 import ConnectedNetwork from "@/components/ConnectedNetwork";
-import { WorldIdVerification } from "@/components/WorldIdVerification";
+import { WorldIdVerification } from "@/components/world-id/WorldIdVerification";
 import Image from 'next/image';
 
 export default function Home() {
