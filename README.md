@@ -1,6 +1,8 @@
 # World ID Widget Module 🆔
 
-A modern, secure decentralized identity verification application built with Next.js, React, and TypeScript. World ID Widget Module integrates Worldcoin's World ID protocol with Reown (formerly WalletConnect) to provide seamless wallet connections and privacy-preserving human verification for decentralized applications (dApps).
+A modern, secure decentralized identity verification application built with Next.js, React, and TypeScript. 
+
+World ID Widget Module integrates Worldcoin's World ID protocol with Reown's AppKit (formerly WalletConnect) to provide seamless wallet connections and privacy-preserving human verification for decentralized applications (dApps).
 
 ## Overview
 
@@ -25,7 +27,7 @@ This application serves as a reference implementation for developers looking to 
 - **Identity**: World ID (@worldcoin/idkit) for human verification
 - **Wallet Integration**: Reown AppKit with Wagmi adapter for multi-wallet support
 - **State Management**: React Query (@tanstack/react-query) for server state management
-- **Blockchain Interaction**: Viem for Ethereum interactions
+- **Blockchain Interaction**: `@wagmi/core (v2)` `Viem` for Ethereum interactions
 - **Styling**: CSS modules with responsive design
 - **Development**: ESLint for code quality and TypeScript for type safety
 
@@ -47,9 +49,11 @@ This application serves as a reference implementation for developers looking to 
    cp .env.example .env
    ```
    
-   Update the following variables in `.env.local`:
-   - `NEXT_PUBLIC_WORLDCOIN_APP_ID`: Your World ID app ID from [Worldcoin Developer Portal](https://developer.worldcoin.org)
-   - `NEXT_PUBLIC_WORLDCOIN_ACTION`: Your verification action name
+   Update the following variables in `.env`:
+   - `NEXT_PUBLIC_WORLDCOIN_APP_ID`: Your World ID's `app ID` from [Worldcoin Developer Portal](https://developer.worldcoin.org)
+   - `NEXT_PUBLIC_WORLDCOIN_ACTION`: Your World ID's `action (ID)` name from [Worldcoin Developer Portal](https://developer.worldcoin.org)
+   - `NEXT_PUBLIC_WORLDCOIN_RP_ID`: Your World ID's `RP ID` from [Worldcoin Developer Portal](https://developer.worldcoin.org)
+   - `NEXT_PUBLIC_WORLDCOIN_RP_SIGNING_KEY`: Your World ID's `RP Signing key`, which is a `Private Key` that is downloaded from [Worldcoin Developer Portal](https://developer.worldcoin.org)
    - `NEXT_PUBLIC_PROJECT_ID`: Your Reown project ID from [Reown Dashboard](https://dashboard.reown.com)
 
 4. **Start the development server:**

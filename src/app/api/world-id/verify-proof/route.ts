@@ -1,4 +1,4 @@
-// app/api/world-id/verify-proof/route.ts
+// The directory of this file: app/api/world-id/verify-proof/route.ts
 
 import { NextResponse } from "next/server";
 import type { IDKitResult } from "@worldcoin/idkit";

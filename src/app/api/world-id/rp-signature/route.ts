@@ -1,4 +1,4 @@
-// app/api/world-id/rp-signature/route.ts
+// The directory of this file: app/api/world-id/rp-signature/route.ts
 
 import { NextResponse } from "next/server";
 import type { IDKitResult } from "@worldcoin/idkit";
