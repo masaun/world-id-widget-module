@@ -68,16 +68,22 @@ NOTE:
 
 ### World ID Verification
 1. Launch the application
-2. Click `"🌍 Verify with World ID"` button to start the human verification process
-3. QR code modal for a `World ID v3 Proof` verification (`iris` based verification using `orb` ) would be displayed:
-   (NOTE: In advance, Visit a Worldcoin orb location
-4. Once a user scan the QR code via their World App, the `World ID v3 Proof` generation and verification would get started.
-5. Once a `World ID v3 Proof` generation and verification would be completed `off-chain` (`backend`), the proof data is stored into the `on-chain` storage via the `storeVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
-6. View your verification status and details
-7. You can check wether a user has a `World ID v3 Proof` in the form of `World ID v3 Proof` badge by invoking the `hasWorldIDV3Badge()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
 
+2. Click `"🌍 Verify with World ID"` button to start the human verification process
+
+3. QR code modal for a `World ID v3 Proof` verification (`iris` based verification using `orb` ) would be displayed:
+   (NOTE: Visit a [**Worldcoin `orb`** location](https://world.org/orb) in advance if you has not verified via the Orb yet)
+
+4. Once a user scan the QR code via their World App, the `World ID v3 Proof` generation and verification would get started.
+
+5. Once a `World ID v3 Proof` generation and verification would be completed `off-chain` (`backend`), the proof data is stored into the `on-chain` storage via the [`storeVerifiedWorldIDV3ProofData()`](https://github.com/masaun/world-id-widget-module/blob/main/src/components/world-id/WorldIdVerification.tsx#L227-L239) of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`. (NOTE: You can also use the [source function](https://github.com/masaun/world-id-widget-module/blob/main/src/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManagerForOffChainVerifiedProof.ts#L59-L103) to call it)
+
+6. View your verification status and details
+
+7. You can check wether a user has a `World ID v3 Proof` in the form of `World ID v3 Proof` badge by invoking the [`hasWorldIDV3Badge()`](https://github.com/masaun/world-id-widget-module/blob/main/src/components/world-id/WorldIdVerification.tsx#L269-L276) of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`. (NOTE: You can also use the [source function](https://github.com/masaun/world-id-widget-module/blob/main/src/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManagerForOffChainVerifiedProof.ts#L109-L130) to call it)
+ 
 NOTE:
-- Also, you can check a data of the verified `World ID v3 Proof` by invoking the `getVerifiedWorldIDV3ProofData()` of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`)
+- Also, you can check a data of the verified `World ID v3 Proof` by invoking the [`getVerifiedWorldIDV3ProofData()`](https://github.com/masaun/world-id-widget-module/blob/main/src/lib/world-id-badge-manager/contracts/functions/wagmi/WorldIDV3BadgeManagerForOffChainVerifiedProof.ts#L136-L159) of the `WorldIDV3BadgeManagerForOffChainVerifiedProof.sol`
 
 - Where the files, which is for `World ID v3 Proof` generation and verification would be completed `off-chain` (`backend`), is stored:
    - `RP Signature` generation: `app/api/world-id/rp-signature/route.ts`
@@ -104,13 +110,13 @@ Once both World ID verification and wallet connection are complete, you can:
 
 ### Documentation
 - [World ID Documentation](https://docs.world.org/world-id)
-- [Worldcoin Developer Portal](https://developer.worldcoin.org)
+- [World Developer Portal](https://developer.worldcoin.org)
 - [Reown Documentation](https://docs.reown.com)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Wagmi Documentation](https://wagmi.sh)
 
 ### Getting Started Guides
-- [World ID Integration Guide](https://docs.world.org/world-id/reference/idkit#idkitwidget)
+- [World ID Integration Guide](https://docs.world.org/world-id/idkit/integrate)
 - [Reown AppKit Setup](https://docs.reown.com/appkit/next/core/installation)
 - [Next.js App Router](https://nextjs.org/docs/app)
 
