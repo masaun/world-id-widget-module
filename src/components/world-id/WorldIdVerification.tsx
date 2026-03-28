@@ -321,6 +321,10 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               preset={orbLegacy({ signal: callerAddress })}
               //preset={orbLegacy({ signal: userWalletAddress })}
 
+              // @dev - If you use the World App simulator (https://simulator.worldcoin.org/), you should set the environment to "staging"
+              environment="staging"
+              //environment="production"
+
               handleVerify={handleVerify}
 
               onSuccess={handleSuccess}
