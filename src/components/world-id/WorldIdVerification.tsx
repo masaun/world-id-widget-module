@@ -320,7 +320,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               //preset={orbLegacy({ signal: callerAddress })}  // World ID Proof (Orb) v3.0 preset
               preset={proofOfHuman({ signal: callerAddress })} // World ID Proof (Orb) v4.0 preset
 
-              // @dev - If you use the World App simulator (https://simulator.worldcoin.org/), you should set the environment to "staging"
+              // @dev - If you use the World App simulator (https://simulator.worldcoin.org/), you should set the "staging" to the environment.
               environment="staging"
               //environment="production"
 
