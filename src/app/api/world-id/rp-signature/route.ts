@@ -19,10 +19,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const { sig, nonce, createdAt, expiresAt } = signRequest(
+  const { sig, nonce, createdAt, expiresAt } = signRequest({
+    signingKeyHex: signingKey,
     action,
-    signingKey
-  );
+  });
 
   return NextResponse.json({
     sig,
