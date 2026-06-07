@@ -57,12 +57,38 @@ NOTE:
    - `NEXT_PUBLIC_WORLDCOIN_RP_SIGNING_KEY`: Your World ID's `RP Signing key`, which is a `Private Key` that is downloaded from [Worldcoin Developer Portal](https://developer.worldcoin.org)
    - `NEXT_PUBLIC_PROJECT_ID`: Your Reown project ID from [Reown Dashboard](https://dashboard.reown.com)
 
-4. **Start the development server:**
+
+4. Set the `"staging"` or `"production"` to the `environment` attribution in the `WorldIdVerification.tsx`:
+   - NOTE: If you use the `World App simulator` (https://simulator.worldcoin.org/), you should set the  `"staging"` to the `environment` attribution.
+```typescript
+            <IDKitRequestWidget
+              ...
+              // @dev - If you use the World App simulator (https://simulator.worldcoin.org/), you should set the "staging" to the environment:
+              environment="staging"
+              //environment="production"
+              ...
+            />
+```
+
+5. Set the `orbLegacy()` or `proofOfHuman()` to the `preset` attribution in the `WorldIdVerification.tsx`:
+   - `orbLegacy()` preset is for World ID Proof (Orb) `v3.0` proof generation.
+   - `proofOfHuman()` preset is for World ID Proof (Orb) `v4.0` proof generation
+```typescript
+            <IDKitRequestWidget
+              ...
+              //preset={orbLegacy({ signal: callerAddress })}  // World ID Proof (Orb) v3.0 preset
+              preset={proofOfHuman({ signal: callerAddress })} // World ID Proof (Orb) v4.0 preset
+              ...
+            />
+```
+
+
+6. **Start the development server:**
    ```bash
    npm run dev
    ```
 
-5. **Open your browser and navigate to `http://localhost:3000`**
+6. **Open your browser and navigate to `http://localhost:3000`**
 
 ## Usage
 

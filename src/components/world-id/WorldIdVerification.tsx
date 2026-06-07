@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 // @dev - ID Kit SDK (@worldcoin/idkit) powered by World ID
 import {
   IDKitRequestWidget,
-  orbLegacy,
+  orbLegacy,    // World ID Proof (Orb) v3.0
+  proofOfHuman, // World ID Proof (Orb) v4.0
   type RpContext
 } from '@worldcoin/idkit';
 //import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
@@ -87,7 +88,6 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
   const app_id = process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID || "WORLDCOIN_APP_ID is not set"; // Replace with your app_id
   const action_id = process.env.NEXT_PUBLIC_WORLDCOIN_ACTION || "WORLDCOIN_ACTION is not set"; // Replace with your action
   const rp_id = process.env.NEXT_PUBLIC_WORLDCOIN_RP_ID || "WORLDCOIN_RP_ID is not set";;   // Replace with your rp_id
-  //const userWalletAddress = process.env.NEXT_PUBLIC_TEST_WALLET_ADDRESS;
   const worldScanSepolia = process.env.NEXT_PUBLIC_WORLD_SCAN_SEPOLIA;
   const worldScanMainnet = process.env.NEXT_PUBLIC_WORLD_SCAN_MAINNET;
   console.log("app_id: ", app_id);
@@ -316,12 +316,11 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               action={action_id}
               rp_context={rpContext}
               allow_legacy_proofs={true}
-              // Signal (optional): Bind specific context into the requested proof.
-              // Examples: user ID, wallet address. Your backend should enforce the same value.
-              preset={orbLegacy({ signal: callerAddress })}
-              //preset={orbLegacy({ signal: userWalletAddress })}
+              // Signal (optional): Bind specific context into the requested proof. For example, user ID, wallet address. Your backend should enforce the same value.
+              //preset={orbLegacy({ signal: callerAddress })}  // World ID Proof (Orb) v3.0 preset
+              preset={proofOfHuman({ signal: callerAddress })} // World ID Proof (Orb) v4.0 preset
 
-              // @dev - If you use the World App simulator (https://simulator.worldcoin.org/), you should set the environment to "staging"
+              // @dev - If you use the World App simulator (https://simulator.worldcoin.org/), you should set the "staging" to the environment.
               environment="staging"
               //environment="production"
 
