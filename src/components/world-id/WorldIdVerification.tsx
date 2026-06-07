@@ -308,6 +308,7 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
 
             {/* World ID widget (modal) */}
             <IDKitRequestWidget
+            
               open={open}
               onOpenChange={setOpen}
               app_id={app_id} // Your app's `app_id` from the Developer Portal
