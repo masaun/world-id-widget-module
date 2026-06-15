@@ -82,13 +82,27 @@ NOTE:
             />
 ```
 
+6. Set the `passport()` preset in `WorldIdV4PassportVerification.tsx` for **World ID v4 Passport (NFC credential) verification**:
+   - `passport()` preset is for World ID v4 **NFC Passport credential** (credential ID: `9303`) verification.
+   - It requests proof that the user holds a verified government-issued NFC passport credential.
+   - Set `allow_legacy_proofs: true` to also accept World ID 3.0 fallback (legacy Document verification) for users who do not yet have a World ID 4.0 credential.
+   - The `signal` (e.g. the connected wallet address) is bound into the proof to prevent replay attacks — your backend should enforce the same value.
+```typescript
+            <IDKitRequestWidget
+              ...
+              allow_legacy_proofs={true}
+              preset={passport({ signal: callerAddress })} // World ID v4 NFC Passport credential (9303) preset
+              ...
+            />
+```
+   Reference: [World ID Credentials — `passport()` preset](https://docs.world.org/world-id/idkit/credentials#passport) | [NFC Credential (9303)](https://docs.world.org/world-id/credentials/9303)
 
-6. **Start the development server:**
+7. **Start the development server:**
    ```bash
    npm run dev
    ```
 
-6. **Open your browser and navigate to `http://localhost:3000`**
+8. **Open your browser and navigate to `http://localhost:3000`**
 
 ## Usage
 
@@ -114,6 +128,27 @@ NOTE:
 - Where the files, which is for `World ID v3 Proof` generation and verification would be completed `off-chain` (`backend`), is stored:
    - `RP Signature` generation: `app/api/world-id/rp-signature/route.ts`
    - `World ID v3 Proof` generation and verification: `app/api/world-id/verify-proof/route.ts`
+
+
+### World ID v4 Passport Verification (NFC Credential)
+1. Launch the application
+
+2. Click `"🛂 Verify Passport with World ID"` button to start the NFC passport credential verification process
+
+3. A QR code modal for **World ID v4 Passport** verification will be displayed. Scan it with the World App.
+   (NOTE: Your passport must already be enrolled in the World App. The credential uses NFC chip data from a government-issued passport.)
+
+4. Once a user scans the QR code via their World App, the `passport()` preset triggers a World ID v4 NFC Passport credential proof (credential ID: `9303`).
+
+5. Once the credential proof is verified `off-chain` (`backend`), the verification result is displayed on screen.
+
+NOTE:
+- The `passport()` preset verifies that the user holds a **unique government-issued NFC passport credential** — each passport can only be linked to one World ID, providing document-level Sybil resistance.
+- `allow_legacy_proofs: true` enables fallback support for users with World ID 3.0 Document credentials.
+- Where the files for `World ID v4 Passport` proof verification are stored:
+   - `RP Signature` generation: `app/api/world-id/rp-signature/route.ts`
+   - Proof verification: `app/api/world-id/verify-proof/route.ts`
+- The component is located at: `src/components/world-id/v4/nfc-credential/passport/WorldIdV4PassportVerification.tsx`
 
 
 ### Wallet Connection
