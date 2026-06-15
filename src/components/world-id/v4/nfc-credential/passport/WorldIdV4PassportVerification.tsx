@@ -147,7 +147,10 @@ export const WorldIdV4PassportVerification = ({ onSuccess, onError }: WorldIdV4P
               app_id={app_id}
               action={action_id}
               rp_context={rpContext}
-              allow_legacy_proofs={true}
+              
+              //allow_legacy_proofs={false}  // v4 Proof only
+              allow_legacy_proofs={true}     // v3 Proof is also allowed 
+              
               preset={passport({ signal: callerAddress })}
 
               environment="production"
