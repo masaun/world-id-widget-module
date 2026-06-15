@@ -4,7 +4,8 @@ import { ConnectButton } from "@/components/ConnectButton";
 //import { InfoList } from "@/components/InfoList";
 //import { ActionButtonList } from "@/components/ActionButtonList";
 import ConnectedNetwork from "@/components/ConnectedNetwork";
-import { WorldIdVerification } from "@/components/world-id/WorldIdVerification";
+import { WorldIdVerification } from "@/components/world-id/v3/proof-of-human/orb/WorldIdVerification";
+import { WorldIdV4PassportVerification } from "@/components/world-id/v4/nfc-credential/passport/WorldIdV4PassportVerification";
 import Image from 'next/image';
 
 export default function Home() {
@@ -23,7 +24,7 @@ export default function Home() {
       
       <br />
 
-      <WorldIdVerification 
+      <WorldIdVerification
         onSuccess={(result) => {
           console.log("World ID verification completed:", result);
         }}
@@ -31,7 +32,18 @@ export default function Home() {
           console.error("World ID verification error:", error);
         }}
       />
-      
+
+      <br />
+
+      <WorldIdV4PassportVerification
+        onSuccess={(result) => {
+          console.log("World ID v4 Passport verification completed:", result);
+        }}
+        onError={(error) => {
+          console.error("World ID v4 Passport verification error:", error);
+        }}
+      />
+
       {/* <ActionButtonList /> */}
 
       {/* 

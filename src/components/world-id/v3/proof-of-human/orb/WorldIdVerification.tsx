@@ -331,38 +331,6 @@ export const WorldIdVerification = ({ onSuccess, onError }: WorldIdProps) => {
               onError={handleError}
             />
           </>
-
-          // <IDKitWidget
-          //   app_id={app_id}
-          //   action={action_id}
-          //   verification_level={VerificationLevel.SecureDocument}
-          //   onSuccess={handleVerify}
-          //   onError={handleError}
-          //   credential_types={["secure document"]}
-          //   //credential_types={["orb", "phone"]}
-          //   enableTelemetry
-          // >
-          //   {({ open }: { open: () => void }) => (
-          //     <button 
-          //       onClick={open}
-          //       className="world-id-button"
-          //       style={{
-          //         backgroundColor: '#000000',
-          //         color: 'white',
-          //         border: 'none',
-          //         borderRadius: '8px',
-          //         padding: '12px 24px',
-          //         fontSize: '16px',
-          //         fontWeight: '600',
-          //         cursor: 'pointer',
-          //         transition: 'all 0.2s ease',
-          //         marginTop: '10px'
-          //       }}
-          //     >
-          //       🌍 Verify with World
-          //     </button>
-          //   )}
-          // </IDKitWidget>
         ) : (
           <div className="verification-success">
             <p className="verification-text">
